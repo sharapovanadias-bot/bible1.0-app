@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bible Pro Gold</title>
+    <title>Bible Gold Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -16,12 +16,12 @@
         body.sepia { --bg: #f4ecd8; --text: #5b4636; --card: #eaddca; --border: rgba(0,0,0,0.05); }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; }
+        body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
         
         header { position: sticky; top: 0; background: var(--bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; border-bottom: 1px solid var(--border); }
         .logo { font-size: 20px; font-weight: 800; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        main { padding: 15px 20px 140px 20px; }
+        main { padding: 15px 20px 140px 20px; min-height: 100vh; }
 
         /* Banner */
         .premium-banner { background: var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 25px; color: #4a3b00; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 20px rgba(179,135,40,0.2); }
@@ -31,15 +31,15 @@
         .book-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid var(--border); cursor: pointer; }
         .b-icon { width: 45px; height: 45px; background: var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px; font-size: 20px; }
         .b-title { font-weight: 700; font-size: 17px; }
-        .b-sub { font-size: 11px; opacity: 0.5; font-weight: bold; text-transform: uppercase; }
+        .b-sub { font-size: 11px; opacity: 0.5; font-weight: bold; }
 
         /* Grid */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .ch-btn { aspect-ratio: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-weight: bold; font-size: 18px; color: var(--text); }
 
         /* Reader */
-        .v-row { margin-bottom: 25px; font-size: 19px; line-height: 1.7; }
-        .v-num { color: var(--gold-s); font-weight: 800; font-size: 11px; display: block; margin-bottom: 4px; }
+        .v-row { margin-bottom: 25px; font-size: 19px; line-height: 1.7; font-family: serif; }
+        .v-num { color: var(--gold-s); font-weight: 800; font-size: 11px; display: block; margin-bottom: 4px; font-family: sans-serif; }
 
         /* Nav */
         nav { position: fixed; bottom: 20px; left: 15px; right: 15px; background: var(--card); border-radius: 25px; display: flex; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid var(--border); z-index: 2000; }
@@ -50,7 +50,10 @@
 
         .hidden { display: none !important; }
         #premium-page { text-align: center; padding: 20px 0; }
-        .buy-btn { background: var(--gold); border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 20px rgba(179,135,40,0.3); }
+        .buy-btn { background: var(--gold); border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 20px rgba(179,135,40,0.3); color: #000; }
+        
+        .img-item { background: var(--card); border-radius: 15px; overflow: hidden; height: 120px; border: 1px solid var(--border); }
+        .img-item img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -67,49 +70,44 @@
     </header>
 
     <main id="app-main">
-        <!-- Главный экран -->
         <div id="v-bible">
             <div id="pro-banner" class="premium-banner" onclick="switchTab('premium')">
-                <div><h3>PRO Доступ</h3><p>Откройте все книги и функции</p></div>
+                <div><h3 id="pro-banner-title">PRO Доступ</h3><p id="pro-banner-sub">Откройте все книги</p></div>
                 <i class="bi bi-gem"></i>
             </div>
             <h2 id="title-main" style="font-weight:800;margin-bottom:20px;">Библия</h2>
             <div id="books-list"></div>
         </div>
 
-        <!-- Главы -->
         <div id="v-chapters" class="hidden">
             <h2 id="title-chapters" style="font-weight:800;margin-bottom:20px;">Главы</h2>
             <div class="grid" id="chapters-list"></div>
         </div>
 
-        <!-- Чтение -->
         <div id="v-reader" class="hidden"></div>
 
-        <!-- Галерея -->
         <div id="v-gallery" class="hidden">
             <h2 id="title-gallery" style="font-weight:800;margin-bottom:20px;">Галерея</h2>
             <div class="grid" style="grid-template-columns: 1fr 1fr;" id="gallery-list"></div>
         </div>
 
-        <!-- Избранное -->
         <div id="v-favorites" class="hidden">
             <h2 id="title-favorites" style="font-weight:800;margin-bottom:20px;">Избранное</h2>
             <div id="favs-list"></div>
         </div>
 
-        <!-- Премиум -->
         <div id="v-premium" class="hidden">
             <div id="premium-page">
                 <i class="bi bi-gem" style="font-size:60px; color:var(--gold-s);"></i>
-                <h1 style="font-weight:900;">GOLD EDITION</h1>
-                <p style="opacity:0.6;">Все книги, аудио и эксклюзивные темы</p>
-                <div style="text-align:left; background:var(--card); padding:20px; border-radius:20px; margin:20px 0;">
-                    <div style="margin-bottom:10px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Псалтирь и Откровение</div>
-                    <div style="margin-bottom:10px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Полная аудиоверсия</div>
-                    <div style="margin-bottom:10px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Без рекламы</div>
+                <h1 style="font-weight:900; margin:10px 0;">GOLD PASS</h1>
+                <p style="opacity:0.6;">Псалтирь, Откровение и полная аудиоверсия</p>
+                <div style="text-align:left; background:var(--card); padding:20px; border-radius:20px; margin:20px 0; border: 1px solid var(--border);">
+                    <div style="margin-bottom:12px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Все 66 книг Библии</div>
+                    <div style="margin-bottom:12px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Аудиобиблия без границ</div>
+                    <div style="margin-bottom:12px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> HD Галерея сюжетов</div>
                 </div>
-                <button class="buy-btn" onclick="activatePro()">КУПИТЬ PRO ЗА $4.99</button>
+                <button class="buy-btn" onclick="activatePro()">АКТИВИРОВАТЬ ЗА 399₽</button>
+                <p style="margin-top:15px; font-size:11px; opacity:0.4;">Оплата через сервис Tribute</p>
             </div>
         </div>
     </main>
@@ -127,10 +125,10 @@
             lang: localStorage.getItem('lang') || 'ru',
             theme: localStorage.getItem('theme') || 'light',
             isPro: localStorage.getItem('isPro') === 'true',
-            tab: 'bible', view: 'books', book: null, ch: null,
+            view: 'books', book: null, ch: null,
             trans: {
-                ru: { bible: 'Библия', gallery: 'Галерея', favorites: 'Избранное', premium: 'PRO', pro_text: 'PRO Доступ', pro_sub: 'Откройте все книги' },
-                en: { bible: 'Bible', gallery: 'Gallery', favorites: 'Favorites', premium: 'PRO', pro_text: 'PRO Access', pro_sub: 'Unlock all books' }
+                ru: { bible: 'Библия', gallery: 'Галерея', favorites: 'Избранное', premium: 'PRO', pro_t: 'PRO Доступ', pro_s: 'Откройте все книги' },
+                en: { bible: 'Bible', gallery: 'Gallery', favorites: 'Favorites', premium: 'PRO', pro_t: 'PRO Access', pro_s: 'Unlock all books' }
             },
             books: {
                 ru: [{id:'gen',name:'Бытие',c:50,pro:false},{id:'mat',name:'От Матфея',c:28,pro:false},{id:'joh',name:'От Иоанна',c:21,pro:false},{id:'psa',name:'Псалтирь',c:150,pro:true},{id:'rev',name:'Откровение',c:22,pro:true}],
@@ -145,10 +143,7 @@
             document.getElementById('back-btn').onclick = goBack;
         }
 
-        function applyTheme() {
-            document.body.className = state.theme;
-        }
-
+        function applyTheme() { document.body.className = state.theme; }
         function nextTheme() {
             const themes = ['light', 'dark', 'sepia'];
             state.theme = themes[(themes.indexOf(state.theme) + 1) % 3];
@@ -173,9 +168,8 @@
             document.getElementById('title-main').innerText = t.bible;
             document.getElementById('title-gallery').innerText = t.gallery;
             document.getElementById('title-favorites').innerText = t.favorites;
-            document.getElementById('pro-banner').querySelector('h3').innerText = t.pro_text;
-            document.getElementById('pro-banner').querySelector('p').innerText = t.pro_sub;
-            
+            document.getElementById('pro-banner-title').innerText = t.pro_t;
+            document.getElementById('pro-banner-sub').innerText = t.pro_s;
             if(state.isPro) document.getElementById('pro-banner').classList.add('hidden');
             renderBooks();
         }
@@ -241,16 +235,15 @@
 
         function renderGallery() {
             const imgs = ['creation','noah_ark','david_harp','sermon_on_the_mount','revelation'];
-            document.getElementById('gallery-list').innerHTML = imgs.map(img => `<div style="background:var(--card);border-radius:15px;overflow:hidden;"><img src="public/assets/${img}.jpg" style="width:100%;height:100px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/150'"></div>`).join('');
+            document.getElementById('gallery-list').innerHTML = imgs.map(img => `<div class="img-item"><img src="public/assets/${img}.jpg" onerror="this.src='https://via.placeholder.com/150'"></div>`).join('');
         }
 
         function activatePro() {
-            tg.showConfirm("Активировать PRO доступ?", (ok) => {
+            tg.showConfirm("Выполнить оплату 399₽ через Tribute?", (ok) => {
                 if(ok) {
                     state.isPro = true; localStorage.setItem('isPro', 'true');
-                    tg.showAlert("Premium активирован!");
-                    updateUI();
-                    switchTab('bible');
+                    tg.showAlert("Оплата принята! Bible Gold активирован.");
+                    updateUI(); switchTab('bible');
                 }
             });
         }
