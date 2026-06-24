@@ -2,81 +2,86 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Библия для всех</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bible for Everyone</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        body { background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #222); font-family: sans-serif; }
-        .bg-secondary { background-color: var(--tg-theme-secondary-bg-color, #f4f4f5); }
-        .text-hint { color: var(--tg-theme-hint-color, #999); }
-        .nav-tab.active { color: var(--tg-theme-button-color, #3390ec); border-bottom: 2px solid var(--tg-theme-button-color, #3390ec); }
-        .verse-number { font-size: 0.8rem; color: #3390ec; margin-right: 8px; font-weight: bold; }
+        :root { --blue: #3390ec; --bg: #ffffff; --text: #000000; --sec-bg: #f4f4f5; --hint: #999; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        header { position: sticky; top: 0; background: var(--sec-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .btn-lang { background: var(--blue); color: #fff; border: none; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; }
+        main { padding: 16px; padding-bottom: 80px; min-height: 100vh; }
+        .card { background: var(--sec-bg); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .btn-ch { aspect-ratio: 1/1; background: var(--sec-bg); border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; color: var(--text); }
+        .verse-box { background: rgba(0,0,0,0.03); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+        .verse-head { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .v-num { color: var(--blue); font-weight: bold; font-size: 14px; }
+        .v-text { line-height: 1.5; font-size: 17px; margin: 0; }
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--sec-bg); border-top: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-around; padding: 8px; z-index: 20; }
+        .nav-item { border: none; background: none; color: var(--hint); display: flex; flex-direction: column; align-items: center; font-size: 10px; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--blue); }
+        .nav-item i { font-size: 20px; margin-bottom: 2px; }
+        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: flex-end; }
+        #modal-content { background: var(--bg); width: 100%; border-radius: 20px 20px 0 0; padding: 24px; max-height: 80vh; overflow-y: auto; transform: translateY(100%); transition: 0.3s; }
+        .hidden { display: none !important; }
+        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .img-card { background: var(--sec-bg); border-radius: 12px; overflow: hidden; text-align: center; }
+        .img-card img { width: 100%; height: 120px; object-fit: cover; }
+        .img-card p { padding: 8px; margin: 0; font-size: 11px; font-weight: bold; }
     </style>
 </head>
-<body class="antialiased">
-    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col">
-        <header class="sticky top-0 z-10 bg-secondary p-4 shadow-sm flex items-center justify-between">
-            <div class="flex items-center">
-                <button id="back-button" class="hidden text-xl mr-3"><i class="bi bi-chevron-left"></i></button>
-                <h1 id="header-title" class="text-xl font-bold">Библия</h1>
-            </div>
-            <button onclick="toggleLanguage()" class="px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-bold uppercase">
-                <span id="lang-label">RU</span>
-            </button>
-        </header>
+<body>
+    <header>
+        <div style="display: flex; align-items: center;">
+            <button id="back-button" class="hidden" style="border:none; background:none; font-size: 20px; margin-right: 12px;"><i class="bi bi-chevron-left"></i></button>
+            <h1 id="header-title" style="margin:0; font-size: 20px;">Bible</h1>
+        </div>
+        <button onclick="toggleLanguage()" class="btn-lang" id="lang-label">RU</button>
+    </header>
 
-        <main id="app-content" class="flex-grow p-4 overflow-y-auto pb-20">
-            <div id="view-books" class="space-y-2"></div>
-            <div id="view-chapters" class="hidden grid grid-cols-5 gap-2"></div>
-            <div id="view-reader" class="hidden"></div>
-            <div id="view-search" class="hidden">
-                <input type="text" id="search-input" placeholder="Поиск..." class="w-full p-3 rounded-lg bg-secondary mb-4">
-                <div id="search-results" class="space-y-4"></div>
-            </div>
-            <div id="view-gallery" class="hidden grid grid-cols-2 gap-3"></div>
-            <div id="view-favorites" class="hidden space-y-4"></div>
-            <div id="view-info" class="hidden space-y-6 text-center">
-                <img src="public/assets/logo.png" class="w-24 h-24 mx-auto rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/100'">
-                <h2 class="text-2xl font-bold" id="info-title">Библия для всех</h2>
-                <p class="text-hint">Version 1.1.0</p>
-            </div>
-        </main>
+    <main id="app-content">
+        <div id="view-books"></div>
+        <div id="view-chapters" class="hidden grid"></div>
+        <div id="view-reader" class="hidden"></div>
+        <div id="view-favorites" class="hidden"></div>
+        <div id="view-gallery" class="hidden gallery-grid"></div>
+        <div id="view-search" class="hidden">
+            <input type="text" id="search-input" placeholder="Search..." style="width:100%; padding:12px; border-radius:8px; border:none; background:var(--sec-bg); margin-bottom:16px;">
+            <div id="search-results"></div>
+        </div>
+        <div id="view-info" class="hidden" style="text-align: center; padding-top: 40px;">
+            <img src="public/assets/logo.png" style="width:100px; border-radius:20px; margin-bottom:16px;" onerror="this.src='https://via.placeholder.com/100'">
+            <h2 style="margin:0;">Bible for Everyone</h2>
+            <p style="color:var(--hint)">Version 1.2.0</p>
+        </div>
+    </main>
 
-        <nav class="fixed bottom-0 left-0 right-0 bg-secondary border-t flex justify-around p-2 z-20">
-            <button onclick="switchTab('bible')" id="nav-bible" class="nav-tab active flex flex-col items-center p-2">
-                <i class="bi bi-book text-xl"></i><span class="text-[10px] mt-1">Текст</span>
-            </button>
-            <button onclick="switchTab('favorites')" id="nav-favorites" class="nav-tab flex flex-col items-center p-2">
-                <i class="bi bi-bookmark-heart text-xl"></i><span class="text-[10px] mt-1">Избранное</span>
-            </button>
-            <button onclick="switchTab('gallery')" id="nav-gallery" class="nav-tab flex flex-col items-center p-2">
-                <i class="bi bi-image text-xl"></i><span class="text-[10px] mt-1">Рисунки</span>
-            </button>
-            <button onclick="switchTab('search')" id="nav-search" class="nav-tab flex flex-col items-center p-2">
-                <i class="bi bi-search text-xl"></i><span class="text-[10px] mt-1">Поиск</span>
-            </button>
-            <button onclick="switchTab('info')" id="nav-info" class="nav-tab flex flex-col items-center p-2">
-                <i class="bi bi-info-circle text-xl"></i><span class="text-[10px] mt-1">Инфо</span>
-            </button>
-        </nav>
-    </div>
+    <nav>
+        <button onclick="switchTab('bible')" id="nav-bible" class="nav-item active"><i class="bi bi-book"></i><span>Bible</span></button>
+        <button onclick="switchTab('favorites')" id="nav-favorites" class="nav-item"><i class="bi bi-bookmark-heart"></i><span>Favs</span></button>
+        <button onclick="switchTab('gallery')" id="nav-gallery" class="nav-item"><i class="bi bi-image"></i><span>Gallery</span></button>
+        <button onclick="switchTab('search')" id="nav-search" class="nav-item"><i class="bi bi-search"></i><span>Search</span></button>
+        <button onclick="switchTab('info')" id="nav-info" class="nav-item"><i class="bi bi-info-circle"></i><span>Info</span></button>
+    </nav>
 
-    <div id="modal-overlay" class="fixed inset-0 bg-black/50 hidden z-30 flex items-end">
-        <div id="modal-content" class="bg-white w-full rounded-t-2xl p-6 transition-transform translate-y-full max-h-[80vh] overflow-y-auto" style="background-color: var(--tg-theme-bg-color, #fff);"></div>
+    <div id="modal-overlay" onclick="closeModal()">
+        <div id="modal-content" onclick="event.stopPropagation()"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready(); // Сообщаем Telegram, что приложение готово
 
         const state = {
             language: localStorage.getItem('lang') || 'ru',
             currentTab: 'bible', view: 'books', currentBook: null, currentChapter: null,
             translations: {
-                ru: { bible: 'Библия', search: 'Поиск', gallery: 'Рисунки', info: 'Инфо', favorites: 'Избранное', loading: 'Загрузка...', noResults: 'Ничего не найдено', commentary: 'Толкование' },
-                en: { bible: 'Bible', search: 'Search', gallery: 'Gallery', info: 'Info', favorites: 'Favorites', loading: 'Loading...', noResults: 'No results found', commentary: 'Commentary' }
+                ru: { bible: 'Библия', search: 'Поиск', gallery: 'Рисунки', info: 'Инфо', favorites: 'Избранное', loading: 'Загрузка...', noResults: 'Пусто', commentary: 'Толкование' },
+                en: { bible: 'Bible', search: 'Search', gallery: 'Gallery', info: 'Info', favorites: 'Favorites', loading: 'Loading...', noResults: 'Empty', commentary: 'Commentary' }
             },
             books: {
                 ru: [{id:'gen',name:'Бытие',chapters:50},{id:'psa',name:'Псалтирь',chapters:150},{id:'mat',name:'От Матфея',chapters:28},{id:'joh',name:'От Иоанна',chapters:21},{id:'rev',name:'Откровение',chapters:22}],
@@ -84,25 +89,27 @@
             }
         };
 
-        const views = { books: document.getElementById('view-books'), chapters: document.getElementById('view-chapters'), reader: document.getElementById('view-reader'), search: document.getElementById('view-search'), gallery: document.getElementById('view-gallery'), info: document.getElementById('view-info'), favorites: document.getElementById('view-favorites') };
-        const headerTitle = document.getElementById('header-title');
-        const backButton = document.getElementById('back-button');
+        const views = ['books', 'chapters', 'reader', 'favorites', 'gallery', 'search', 'info'];
         let favorites = JSON.parse(localStorage.getItem('favs') || '[]');
 
         function init() {
+            updateTheme();
             updateUILanguage();
-            backButton.onclick = goBack;
-            document.body.style.backgroundColor = tg.backgroundColor;
-            document.body.style.color = tg.textColor;
+            document.getElementById('back-button').onclick = goBack;
+        }
+
+        function updateTheme() {
+            document.documentElement.style.setProperty('--bg', tg.backgroundColor || '#ffffff');
+            document.documentElement.style.setProperty('--text', tg.textColor || '#000000');
+            document.documentElement.style.setProperty('--sec-bg', tg.secondaryBackgroundColor || '#f4f4f5');
+            document.documentElement.style.setProperty('--blue', tg.buttonColor || '#3390ec');
         }
 
         function updateUILanguage() {
             const t = state.translations[state.language];
             document.getElementById('lang-label').innerText = state.language.toUpperCase();
-            ['bible', 'search', 'gallery', 'info', 'favorites'].forEach(id => {
-                document.querySelector(`#nav-${id} span`).innerText = t[id];
-            });
-            if (state.currentTab === 'bible' && state.view === 'books') headerTitle.innerText = t.bible;
+            views.forEach(v => { const el = document.querySelector(`#nav-${v} span`); if(el) el.innerText = t[v] || v; });
+            if (state.currentTab === 'bible' && state.view === 'books') document.getElementById('header-title').innerText = t.bible;
             renderBooks();
         }
 
@@ -116,40 +123,41 @@
         }
 
         function renderBooks() {
-            views.books.innerHTML = '';
+            const v = document.getElementById('view-books');
+            v.innerHTML = '';
             state.books[state.language].forEach(book => {
                 const div = document.createElement('div');
-                div.className = 'p-4 bg-secondary rounded-xl mb-2 flex justify-between items-center cursor-pointer';
+                div.className = 'card';
                 div.innerHTML = `<span>${book.name}</span><i class="bi bi-chevron-right text-hint"></i>`;
                 div.onclick = () => selectBook(book);
-                views.books.appendChild(div);
+                v.appendChild(div);
             });
         }
 
         function selectBook(book) {
-            state.currentBook = book;
-            state.view = 'chapters';
-            headerTitle.innerText = book.name;
-            backButton.classList.remove('hidden');
-            views.books.classList.add('hidden');
-            views.chapters.classList.remove('hidden');
-            views.chapters.innerHTML = '';
+            state.currentBook = book; state.view = 'chapters';
+            document.getElementById('header-title').innerText = book.name;
+            document.getElementById('back-button').classList.remove('hidden');
+            hideViews();
+            document.getElementById('view-chapters').classList.remove('hidden');
+            const vc = document.getElementById('view-chapters');
+            vc.innerHTML = '';
             for (let i = 1; i <= book.chapters; i++) {
                 const btn = document.createElement('button');
-                btn.className = 'aspect-square flex items-center justify-center bg-secondary rounded-lg font-bold';
+                btn.className = 'btn-ch';
                 btn.innerText = i;
                 btn.onclick = () => selectChapter(i);
-                views.chapters.appendChild(btn);
+                vc.appendChild(btn);
             }
         }
 
         async function selectChapter(ch) {
-            state.currentChapter = ch;
-            state.view = 'reader';
-            headerTitle.innerText = `${state.currentBook.name}, ${ch}`;
-            Object.values(views).forEach(v => v.classList.add('hidden'));
-            views.reader.classList.remove('hidden');
-            views.reader.innerHTML = '<p class="p-10 text-center">Загрузка...</p>';
+            state.currentChapter = ch; state.view = 'reader';
+            document.getElementById('header-title').innerText = `${state.currentBook.name}, ${ch}`;
+            hideViews();
+            const vr = document.getElementById('view-reader');
+            vr.classList.remove('hidden');
+            vr.innerHTML = '<p style="text-align:center; padding:20px;">Загрузка...</p>';
             try {
                 const resp = await fetch(`data/${state.language}/${state.currentBook.id}.json`);
                 const data = await resp.json();
@@ -158,40 +166,41 @@
                 chapter.verses.forEach((text, i) => {
                     const vNum = i + 1;
                     const isFav = favorites.some(f => f.id === state.currentBook.id && f.ch === ch && f.v === vNum && f.l === state.language);
-                    html += `<div class="mb-4 p-3 bg-secondary/30 rounded-xl">
-                        <div class="flex justify-between mb-1">
-                            <span class="verse-number">${vNum}</span>
-                            <div class="flex gap-4">
-                                <button onclick="toggleFav('${state.currentBook.id}','${state.currentBook.name}',${ch},${vNum},'${text.replace(/'/g,"\\'")}')" class="${isFav?'text-red-500':'text-hint'}"><i class="bi ${isFav?'bi-heart-fill':'bi-heart'}"></i></button>
-                                <button onclick="showComm(${vNum})" class="text-blue-500"><i class="bi bi-chat-text"></i></button>
+                    html += `<div class="verse-box">
+                        <div class="verse-head">
+                            <span class="v-num">${vNum}</span>
+                            <div>
+                                <i class="bi ${isFav?'bi-heart-fill text-red-500':'bi-heart'}" onclick="toggleFav('${state.currentBook.id}','${state.currentBook.name}',${ch},${vNum},'${text.replace(/'/g,"\\'")}')" style="margin-right:15px; cursor:pointer;"></i>
+                                <i class="bi bi-chat-text text-blue-500" onclick="showComm(${vNum})" style="cursor:pointer;"></i>
                             </div>
                         </div>
-                        <p>${text}</p>
+                        <p class="v-text">${text}</p>
                     </div>`;
                 });
-                views.reader.innerHTML = html;
-            } catch (e) { views.reader.innerHTML = '<p class="p-10 text-center text-red-500">Ошибка загрузки текста</p>'; }
+                vr.innerHTML = html;
+            } catch (e) { vr.innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>'; }
         }
 
         function goBack() {
-            if (state.view === 'reader') { state.view = 'chapters'; views.reader.classList.add('hidden'); views.chapters.classList.remove('hidden'); headerTitle.innerText = state.currentBook.name; }
-            else if (state.view === 'chapters') { state.view = 'books'; views.chapters.classList.add('hidden'); views.books.classList.remove('hidden'); backButton.classList.add('hidden'); headerTitle.innerText = state.translations[state.language].bible; }
+            if (state.view === 'reader') selectBook(state.currentBook);
+            else if (state.view === 'chapters') { state.view = 'books'; hideViews(); document.getElementById('view-books').classList.remove('hidden'); document.getElementById('back-button').classList.add('hidden'); document.getElementById('header-title').innerText = state.translations[state.language].bible; }
         }
+
+        function hideViews() { views.forEach(v => document.getElementById(`view-${v}`).classList.add('hidden')); }
 
         function switchTab(tab) {
             state.currentTab = tab;
-            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`nav-${tab}`).classList.add('active');
-            Object.values(views).forEach(v => v.classList.add('hidden'));
+            hideViews();
             if (tab === 'bible') { 
-                if (state.view === 'books') views.books.classList.remove('hidden');
-                else if (state.view === 'chapters') views.chapters.classList.remove('hidden');
-                else views.reader.classList.remove('hidden');
-                headerTitle.innerText = state.view === 'books' ? state.translations[state.language].bible : state.currentBook.name;
+                document.getElementById(`view-${state.view}`).classList.remove('hidden');
+                document.getElementById('header-title').innerText = state.view === 'books' ? state.translations[state.language].bible : state.currentBook.name;
+                if(state.view !== 'books') document.getElementById('back-button').classList.remove('hidden');
             } else {
-                views[tab].classList.remove('hidden');
-                headerTitle.innerText = state.translations[state.language][tab];
-                backButton.classList.add('hidden');
+                document.getElementById(`view-${tab}`).classList.remove('hidden');
+                document.getElementById('header-title').innerText = state.translations[state.language][tab];
+                document.getElementById('back-button').classList.add('hidden');
                 if (tab === 'gallery') renderGallery();
                 if (tab === 'favorites') renderFavs();
             }
@@ -208,31 +217,33 @@
 
         function renderFavs() {
             const list = favorites.filter(f => f.l === state.language);
-            views.favorites.innerHTML = list.length ? list.map(f => `<div class="p-4 bg-secondary rounded-xl mb-2"><p class="text-xs font-bold text-blue-500">${f.name} ${f.ch}:${f.v}</p><p class="text-sm italic">${f.text}</p></div>`).join('') : '<p class="text-center py-10 opacity-50">Пусто</p>';
+            const vf = document.getElementById('view-favorites');
+            vf.innerHTML = list.length ? list.map(f => `<div class="card" style="flex-direction:column; align-items:flex-start;"><p class="v-num" style="margin-bottom:4px;">${f.name} ${f.ch}:${f.v}</p><p class="v-text" style="font-style:italic; font-size:14px;">"${f.text}"</p></div>`).join('') : '<p style="text-align:center; padding:40px; opacity:0.5;">Пусто</p>';
         }
 
         function renderGallery() {
             const titles = state.language === 'ru' ? ['Сотворение','Ковчег','Давид','Проповедь','Иерусалим'] : ['Creation','Ark','David','Sermon','Jerusalem'];
             const imgs = ['creation','noah_ark','david_harp','sermon_on_the_mount','revelation'];
-            views.gallery.innerHTML = imgs.map((img, i) => `<div class="bg-secondary rounded-lg overflow-hidden"><img src="public/assets/${img}.jpg" class="w-full h-32 object-cover" onerror="this.src='https://via.placeholder.com/150'"><p class="p-2 text-center text-[10px] font-bold">${titles[i]}</p></div>`).join('');
+            const vg = document.getElementById('view-gallery');
+            vg.innerHTML = imgs.map((img, i) => `<div class="img-card"><img src="public/assets/${img}.jpg" onerror="this.src='https://via.placeholder.com/150'"><p>${titles[i]}</p></div>`).join('');
         }
 
         async function showComm(vNum) {
-            const modal = document.getElementById('modal-overlay');
-            const content = document.getElementById('modal-content');
-            modal.classList.remove('hidden');
-            setTimeout(() => content.classList.remove('translate-y-full'), 10);
-            content.innerHTML = '<p>Загрузка...</p>';
+            const o = document.getElementById('modal-overlay');
+            const c = document.getElementById('modal-content');
+            o.style.display = 'flex';
+            setTimeout(() => c.style.transform = 'translateY(0)', 10);
+            c.innerHTML = '<p>Загрузка...</p>';
             try {
                 const resp = await fetch(`data/${state.language}/comm/${state.currentBook.id}_${state.currentChapter}.json`);
                 const data = await resp.json();
-                content.innerHTML = `<div class="flex justify-between mb-4"><h3 class="font-bold">Толкование ${vNum}</h3><button onclick="closeModal()" class="text-2xl">&times;</button></div><p>${data[vNum] || 'Толкование скоро появится'}</p>`;
-            } catch (e) { content.innerHTML = `<div class="flex justify-between mb-4"><h3 class="font-bold">Толкование ${vNum}</h3><button onclick="closeModal()" class="text-2xl">&times;</button></div><p>Толкование для этого стиха еще не добавлено.</p>`; }
+                c.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3 style="margin:0;">${state.translations[state.language].commentary} ${vNum}</h3><span onclick="closeModal()" style="font-size:24px; cursor:pointer;">&times;</span></div><p style="line-height:1.6;">${data[vNum] || '...'}</p>`;
+            } catch (e) { c.innerHTML = '<p>Толкование скоро появится.</p>'; }
         }
 
         function closeModal() {
-            document.getElementById('modal-content').classList.add('translate-y-full');
-            setTimeout(() => document.getElementById('modal-overlay').classList.add('hidden'), 300);
+            document.getElementById('modal-content').style.transform = 'translateY(100%)';
+            setTimeout(() => document.getElementById('modal-overlay').style.display = 'none', 300);
         }
 
         init();
