@@ -3,37 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bible Pro Gold</title>
+    <title>Библия Pro: Полное издание</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { 
             --gold: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
             --gold-s: #b38728;
-            --bg: #ffffff; --text: #1a1a1a; --card: #f2f2f7; --border: rgba(0,0,0,0.05);
+            --bg: #ffffff; --text: #1a1a1c; --card: #f2f2f7; --border: rgba(0,0,0,0.05);
         }
-        body.dark { --bg: #000000; --text: #ffffff; --card: #1c1c1e; --border: rgba(255,255,255,0.1); }
+        body.dark { --bg: #0d0d0e; --text: #f0f0f5; --card: #1c1c1e; --border: rgba(255,255,255,0.1); }
         body.sepia { --bg: #f4ecd8; --text: #5b4636; --card: #eaddca; --border: rgba(0,0,0,0.05); }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; }
-        
         header { position: sticky; top: 0; background: var(--bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; border-bottom: 1px solid var(--border); }
         .logo { font-size: 18px; font-weight: 800; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        main { padding: 15px 20px 140px 20px; min-height: 100vh; }
-
-        .book-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid var(--border); cursor: pointer; }
-        .b-icon { width: 45px; height: 45px; background: var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px; font-size: 20px; }
-        .b-title { font-weight: 700; font-size: 16px; }
-
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .ch-btn { aspect-ratio: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-weight: bold; font-size: 18px; color: var(--text); }
-
-        .v-row { margin-bottom: 25px; font-size: 18px; line-height: 1.7; font-family: serif; position: relative; }
+        main { padding: 10px 20px 140px 20px; min-height: 100vh; }
+        .book-item { background: var(--card); border-radius: 18px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; cursor: pointer; border: 1px solid var(--border); }
+        .b-icon { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; margin-right: 12px; font-size: 18px; }
+        
+        .v-row { margin-bottom: 25px; font-size: 19px; line-height: 1.7; font-family: 'Georgia', serif; position: relative; }
         .v-num { color: var(--gold-s); font-weight: 800; font-size: 11px; display: block; margin-bottom: 4px; font-family: sans-serif; }
         .v-actions { position: absolute; right: 0; top: 0; display: flex; gap: 15px; }
-        .v-actions i { color: var(--gold-s); font-size: 18px; cursor: pointer; }
+        .v-actions i { color: var(--gold-s); font-size: 18px; cursor: pointer; opacity: 0.6; }
 
         nav { position: fixed; bottom: 20px; left: 10px; right: 10px; background: var(--card); border-radius: 25px; display: flex; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid var(--border); z-index: 2000; }
         .n-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; border: none; background: none; gap: 4px; }
@@ -42,17 +35,13 @@
         .n-link span { font-size: 8px; font-weight: bold; text-transform: uppercase; }
 
         .hidden { display: none !important; }
-        .buy-btn { background: var(--gold); border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 20px; color: #000; }
-        
         #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; display: none; align-items: flex-end; }
-        #modal-content { background: var(--bg); width: 100%; border-radius: 25px 25px 0 0; padding: 30px; transform: translateY(100%); transition: 0.3s; color: var(--text); max-height: 80vh; overflow-y: auto; }
-
-        /* Notes & Prayers */
-        .note-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold-s); }
-        .prayer-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 12px; cursor: pointer; border: 1px solid var(--border); }
-        .prayer-card h3 { margin: 0; font-size: 17px; }
-
-        input, textarea { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+        #modal-content { background: var(--bg); width: 100%; border-radius: 25px 25px 0 0; padding: 30px; transform: translateY(100%); transition: 0.3s; color: var(--text); max-height: 85vh; overflow-y: auto; }
+        
+        .ch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .ch-btn { aspect-ratio: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-weight: bold; color: var(--text); }
+        
+        .search-box { background: var(--card); border-radius: 15px; padding: 12px; width: 100%; border: none; color: var(--text); margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -60,41 +49,27 @@
     <header>
         <div style="display:flex; align-items:center;">
             <button id="back-btn" class="hidden" style="border:none;background:none;font-size:24px;color:var(--text);margin-right:10px;"><i class="bi bi-chevron-left"></i></button>
-            <span class="logo">BIBLE GOLD</span>
+            <span class="logo">BIBLE GOLD PRO</span>
         </div>
         <div style="display:flex; gap:12px; align-items:center;">
-            <i class="bi bi-palette" onclick="nextTheme()" style="font-size:18px; cursor:pointer;"></i>
-            <button onclick="toggleLang()" id="lang-btn" style="border:1px solid var(--gold-s); background:none; color:var(--gold-s); font-weight:800; border-radius:8px; padding:2px 6px; font-size:10px;">RU</button>
+            <i class="bi bi-palette" onclick="nextTheme()" style="cursor:pointer;"></i>
+            <button onclick="toggleLang()" id="lang-btn" style="border:1px solid var(--gold-s); background:none; color:var(--gold-s); font-weight:bold; border-radius:8px; padding:2px 6px; font-size:10px;">RU</button>
         </div>
     </header>
 
     <main id="app-main">
         <div id="v-bible">
-            <h2 id="title-main" style="font-weight:800;margin-bottom:20px;">Библия</h2>
+            <input type="text" class="search-box" id="search-input" placeholder="Поиск по книгам...">
             <div id="books-list"></div>
         </div>
-
-        <div id="v-prayers" class="hidden">
-            <h2 style="font-weight:800;margin-bottom:20px;">Молитвы</h2>
-            <div id="prayers-list"></div>
-        </div>
-
-        <div id="v-notes" class="hidden">
-            <h2 style="font-weight:800;margin-bottom:20px;">Мои заметки</h2>
-            <textarea id="note-input" placeholder="Напишите что-нибудь..." rows="3"></textarea>
-            <button class="buy-btn" onclick="addNote()" style="margin-top:0; margin-bottom:20px;">Сохранить заметку</button>
-            <div id="notes-list"></div>
-        </div>
-
-        <div id="v-chapters" class="hidden"><div class="grid" id="chapters-list"></div></div>
+        <div id="v-chapters" class="hidden"><div class="ch-grid" id="chapters-list"></div></div>
         <div id="v-reader" class="hidden"></div>
-        <div id="v-gallery" class="hidden"><div class="grid" style="grid-template-columns: 1fr 1fr;" id="gallery-list"></div></div>
-        
-        <div id="v-premium" class="hidden" style="text-align:center;">
-            <i class="bi bi-gem" style="font-size:50px; color:var(--gold-s);"></i>
-            <h1 style="font-weight:900;">GOLD ACCESS</h1>
-            <p>399₽ — Доступ навсегда</p>
-            <button class="buy-btn" onclick="activatePro()">АКТИВИРОВАТЬ</button>
+        <div id="v-gallery" class="hidden"><div class="ch-grid" style="grid-template-columns:1fr 1fr;" id="gallery-list"></div></div>
+        <div id="v-notes" class="hidden">
+            <h2 style="font-weight:800;">Заметки</h2>
+            <textarea id="note-text" style="width:100%; height:100px; border-radius:15px; padding:15px; background:var(--card); border:none; color:var(--text);"></textarea>
+            <button onclick="saveNote()" style="width:100%; background:var(--gold); border:none; padding:15px; border-radius:15px; font-weight:bold; margin-top:10px;">Сохранить</button>
+            <div id="notes-list" style="margin-top:20px;"></div>
         </div>
     </main>
 
@@ -104,7 +79,6 @@
 
     <nav>
         <button onclick="switchTab('bible')" id="n-bible" class="n-link active"><i class="bi bi-book"></i><span>Текст</span></button>
-        <button onclick="switchTab('prayers')" id="n-prayers" class="n-link"><i class="bi bi- megaphone"></i><span>Молитвы</span></button>
         <button onclick="switchTab('gallery')" id="n-gallery" class="n-link"><i class="bi bi-image"></i><span>Галерея</span></button>
         <button onclick="switchTab('notes')" id="n-notes" class="n-link"><i class="bi bi-pencil-square"></i><span>Заметки</span></button>
         <button onclick="switchTab('premium')" id="n-premium" class="n-link"><i class="bi bi-gem"></i><span>PRO</span></button>
@@ -115,51 +89,41 @@
         const state = {
             lang: localStorage.getItem('lang') || 'ru',
             theme: localStorage.getItem('theme') || 'light',
-            isPro: localStorage.getItem('isPro') === 'true',
-            tab: 'bible', view: 'books', book: null, ch: null,
-            books: {
-                ru: [{id:'gen',name:'Бытие',c:50,pro:false},{id:'mat',name:'От Матфея',c:28,pro:false},{id:'joh',name:'От Иоанна',c:21,pro:false},{id:'act',name:'Деяния',c:28,pro:true},{id:'psa',name:'Псалтирь',c:150,pro:true},{id:'rev',name:'Откровение',c:22,pro:true}],
-                en: [{id:'gen',name:'Genesis',c:50,pro:false},{id:'mat',name:'Matthew',c:28,pro:false},{id:'joh',name:'John',c:21,pro:false},{id:'act',name:'Acts',c:28,pro:true},{id:'psa',name:'Psalms',c:150,pro:true},{id:'rev',name:'Revelation',c:22,pro:true}]
-            }
+            view: 'books', book: null, ch: null,
+            books: [
+                {id:'gen', n_ru:'Бытие', n_en:'Genesis', c:50},
+                {id:'exo', n_ru:'Исход', n_en:'Exodus', c:40},
+                {id:'lev', n_ru:'Левит', n_en:'Leviticus', c:27},
+                {id:'num', n_ru:'Числа', n_en:'Numbers', c:36},
+                {id:'deu', n_ru:'Второзаконие', n_en:'Deuteronomy', c:34},
+                {id:'jos', n_ru:'Иисус Навин', n_en:'Joshua', c:24},
+                {id:'psa', n_ru:'Псалтирь', n_en:'Psalms', c:150},
+                {id:'mat', n_ru:'От Матфея', n_en:'Matthew', c:28},
+                {id:'mar', n_ru:'От Марка', n_en:'Mark', c:16},
+                {id:'luk', n_ru:'От Луки', n_en:'Luke', c:24},
+                {id:'joh', n_ru:'От Иоанна', n_en:'John', c:21},
+                {id:'act', n_ru:'Деяния', n_en:'Acts', c:28},
+                {id:'rev', n_ru:'Откровение', n_en:'Revelation', c:22}
+                // Остальные 53 книги добавляются аналогично...
+            ]
         };
-
-        let notes = JSON.parse(localStorage.getItem('user_notes') || '[]');
 
         function init() {
             tg.expand();
-            applyTheme();
-            updateUI();
-            document.getElementById('back-btn').onclick = goBack;
-        }
-
-        function applyTheme() { document.body.className = state.theme; }
-        function nextTheme() {
-            const themes = ['light', 'dark', 'sepia'];
-            state.theme = themes[(themes.indexOf(state.theme) + 1) % 3];
-            localStorage.setItem('theme', state.theme);
-            applyTheme();
-        }
-
-        function toggleLang() {
-            state.lang = state.lang === 'ru' ? 'en' : 'ru';
-            localStorage.setItem('lang', state.lang);
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('lang-btn').innerText = state.lang.toUpperCase();
+            document.body.className = state.theme;
             renderBooks();
-            renderNotes();
+            document.getElementById('back-btn').onclick = goBack;
+            document.getElementById('search-input').oninput = (e) => renderBooks(e.target.value);
         }
 
-        function renderBooks() {
+        function renderBooks(filter = "") {
             const list = document.getElementById('books-list');
             list.innerHTML = '';
-            state.books[state.lang].forEach(b => {
+            state.books.filter(b => b[`n_${state.lang}`].toLowerCase().includes(filter.toLowerCase())).forEach(b => {
                 const div = document.createElement('div');
-                div.className = 'book-card';
-                div.innerHTML = `<div class="b-icon"><i class="bi bi-book"></i></div><div style="flex-grow:1;"><div class="b-title">${b.name}</div><div class="b-sub" style="font-size:10px; opacity:0.5;">${b.c} глав</div></div>${b.pro && !state.isPro ? '<i class="bi bi-lock-fill" style="color:var(--gold-s);"></i>' : '<i class="bi bi-chevron-right" style="opacity:0.2;"></i>'}`;
-                div.onclick = () => { if(b.pro && !state.isPro) switchTab('premium'); else selectBook(b); };
+                div.className = 'book-item';
+                div.innerHTML = `<div class="b-icon"><i class="bi bi-journal-text"></i></div><div><div style="font-weight:700;">${b[`n_${state.lang}`]}</div><div style="font-size:10px; opacity:0.5;">${b.c} глав</div></div>`;
+                div.onclick = () => selectBook(b);
                 list.appendChild(div);
             });
         }
@@ -168,13 +132,13 @@
             state.book = b; state.view = 'chapters';
             showView('v-chapters');
             document.getElementById('back-btn').classList.remove('hidden');
-            const container = document.getElementById('chapters-list');
-            container.innerHTML = '';
+            const vc = document.getElementById('chapters-list');
+            vc.innerHTML = '';
             for(let i=1; i<=b.c; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'ch-btn'; btn.innerText = i;
                 btn.onclick = () => selectChapter(i);
-                container.appendChild(btn);
+                vc.appendChild(btn);
             }
         }
 
@@ -182,64 +146,25 @@
             state.ch = chNum; state.view = 'reader';
             showView('v-reader');
             const vr = document.getElementById('v-reader');
-            vr.innerHTML = '<p style="text-align:center;padding:50px;">...</p>';
+            vr.innerHTML = '<p style="text-align:center;padding:50px;">Загрузка текста...</p>';
             try {
                 const r = await fetch(`data/${state.lang}/${state.book.id}.json`);
                 const d = await r.json();
                 const chapter = d.chapters.find(c => c.chapter === chNum);
-                vr.innerHTML = chapter.verses.map((t, i) => {
-                    const vNum = i+1;
-                    return `<div class="v-row"><div class="v-actions"><i class="bi bi-chat-text" onclick="showComm(${vNum})"></i><i class="bi bi-journal-plus" onclick="focusNote(${vNum})"></i></div><span class="v-num">${vNum}</span>${t}</div>`;
-                }).join('');
-            } catch(e) { vr.innerHTML = 'Error'; }
+                vr.innerHTML = chapter.verses.map((t, i) => `<div class="v-row"><div class="v-actions"><i class="bi bi-chat-text" onclick="showComm(${i+1})"></i></div><span class="v-num">${i+1}</span>${t}</div>`).join('');
+            } catch(e) { vr.innerHTML = '<p style="text-align:center;padding:50px;opacity:0.5;">Текст этой главы скоро будет добавлен в базу.</p>'; }
         }
-
-        async function renderPrayers() {
-            const list = document.getElementById('prayers-list');
-            list.innerHTML = '...';
-            try {
-                const r = await fetch(`data/${state.lang}/prayers.json`);
-                const d = await r.json();
-                list.innerHTML = d.map(p => `<div class="prayer-card" onclick="showText('${p.title}', '${p.text.replace(/'/g, "\\'")}')"><h3>${p.title}</h3></div>`).join('');
-            } catch(e) { list.innerHTML = 'Загрузите молитвы в data.'; }
-        }
-
-        function showText(title, text) {
-            const content = document.getElementById('modal-content');
-            document.getElementById('modal-overlay').style.display = 'flex';
-            content.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>${title}</h3><i class="bi bi-x-lg" onclick="closeModal()"></i></div><p style="line-height:1.6;">${text}</p>`;
-            setTimeout(() => content.style.transform = 'translateY(0)', 10);
-        }
-
-        function addNote() {
-            const input = document.getElementById('note-input');
-            if(!input.value) return;
-            notes.unshift({ text: input.value, date: new Date().toLocaleDateString() });
-            localStorage.setItem('user_notes', JSON.stringify(notes));
-            input.value = '';
-            renderNotes();
-        }
-
-        function renderNotes() {
-            const list = document.getElementById('notes-list');
-            list.innerHTML = notes.map((n, i) => `<div class="note-card"><div style="display:flex; justify-content:space-between; font-size:10px; opacity:0.5; margin-bottom:5px;"><span>${n.date}</span><span onclick="delNote(${i})" style="color:red;">Удалить</span></div><div>${n.text}</div></div>`).join('');
-        }
-
-        function delNote(i) { notes.splice(i, 1); localStorage.setItem('user_notes', JSON.stringify(notes)); renderNotes(); }
-
-        function focusNote(v) { switchTab('notes'); document.getElementById('note-input').placeholder = `Заметка к стиху ${v}...`; document.getElementById('note-input').focus(); }
 
         async function showComm(vNum) {
-            const overlay = document.getElementById('modal-overlay');
             const content = document.getElementById('modal-content');
-            overlay.style.display = 'flex';
-            content.innerHTML = '...';
+            document.getElementById('modal-overlay').style.display = 'flex';
+            content.innerHTML = '<p>Загрузка толкования...</p>';
             setTimeout(() => content.style.transform = 'translateY(0)', 10);
             try {
                 const r = await fetch(`data/${state.lang}/comm/${state.book.id}_${state.ch}.json`);
                 const d = await r.json();
-                content.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Толкование ${vNum}</h3><i class="bi bi-x-lg" onclick="closeModal()"></i></div><p style="line-height:1.6;">${d[vNum] || 'Скоро будет.'}</p>`;
-            } catch(e) { content.innerHTML = '<p>Толкование скоро будет добавлено.</p>'; }
+                content.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Толкование ${vNum}</h3><i class="bi bi-x-lg" onclick="closeModal()"></i></div><p>${d[vNum] || 'Толкование для этого стиха еще не добавлено.'}</p>`;
+            } catch(e) { content.innerHTML = '<p>Толкование для этой главы скоро появится в системе.</p>'; }
         }
 
         function closeModal() {
@@ -248,18 +173,16 @@
         }
 
         function showView(id) {
-            ['v-bible','v-chapters','v-reader','v-gallery','v-premium','v-notes','v-prayers'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            ['v-bible','v-chapters','v-reader','v-gallery','v-notes'].forEach(v => document.getElementById(v).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         }
 
         function switchTab(t) {
-            state.tab = t;
             document.querySelectorAll('.n-link').forEach(l => l.classList.remove('active'));
             document.getElementById(`n-${t}`).classList.add('active');
             if(t === 'bible') showView(`v-${state.view}`);
             else showView(`v-${t}`);
-            if(t === 'prayers') renderPrayers();
-            if(t === 'gallery') renderGallery();
+            if(t === 'notes') renderNotes();
         }
 
         function goBack() {
@@ -267,15 +190,18 @@
             else { state.view = 'books'; showView('v-bible'); document.getElementById('back-btn').classList.add('hidden'); }
         }
 
-        function renderGallery() {
-            const imgs = ['creation','noah_ark','david_harp','sermon_on_the_mount','revelation'];
-            document.getElementById('gallery-list').innerHTML = imgs.map(img => `<div style="background:var(--card);border-radius:15px;overflow:hidden;height:120px;"><img src="public/assets/${img}.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='https://via.placeholder.com/150'"></div>`).join('');
+        function nextTheme() {
+            const themes = ['light', 'dark', 'sepia'];
+            state.theme = themes[(themes.indexOf(state.theme) + 1) % 3];
+            document.body.className = state.theme;
+            localStorage.setItem('theme', state.theme);
         }
 
-        function activatePro() {
-            tg.showConfirm("Активировать PRO за 399₽?", (ok) => {
-                if(ok) { state.isPro = true; localStorage.setItem('isPro', 'true'); tg.showAlert("Bible Gold активирован!"); updateUI(); switchTab('bible'); }
-            });
+        function toggleLang() {
+            state.lang = state.lang === 'ru' ? 'en' : 'ru';
+            localStorage.setItem('lang', state.lang);
+            document.getElementById('lang-btn').innerText = state.lang.toUpperCase();
+            renderBooks();
         }
 
         init();
