@@ -12,7 +12,7 @@
             --gold-s: #b38728;
             --bg: #ffffff; --text: #1a1a1a; --card: #f2f2f7; --border: rgba(0,0,0,0.05);
         }
-        body.dark { --bg: #0d0d0e; --text: #f0f0f5; --card: #1c1c1e; --border: rgba(255,255,255,0.1); }
+        body.dark { --bg: #000000; --text: #ffffff; --card: #1c1c1e; --border: rgba(255,255,255,0.1); }
         body.sepia { --bg: #f4ecd8; --text: #5b4636; --card: #eaddca; --border: rgba(0,0,0,0.05); }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -27,7 +27,7 @@
         .book-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid var(--border); cursor: pointer; }
         .b-icon { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; margin-right: 12px; }
         
-        .ch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .ch-btn { aspect-ratio: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-weight: bold; color: var(--text); }
 
         .v-row { margin-bottom: 25px; font-size: 19px; line-height: 1.7; font-family: serif; position: relative; }
@@ -42,8 +42,8 @@
         .hidden { display: none !important; }
         .buy-btn { background: var(--gold); border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 20px; color: #000; box-shadow: 0 10px 20px rgba(179,135,40,0.3); }
         
-        .img-item { background: var(--card); border-radius: 15px; overflow: hidden; height: 120px; border: 1px solid var(--border); }
-        .img-item img { width: 100%; height: 100%; object-fit: cover; }
+        .img-card { background: var(--card); border-radius: 15px; overflow: hidden; height: 120px; border: 1px solid var(--border); }
+        .img-card img { width: 100%; height: 100%; object-fit: cover; }
 
         #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; display: none; align-items: flex-end; }
         #modal-content { background: var(--bg); width: 100%; border-radius: 25px 25px 0 0; padding: 30px; transform: translateY(100%); transition: 0.3s; color: var(--text); max-height: 80vh; overflow-y: auto; }
@@ -63,21 +63,21 @@
     </header>
 
     <main id="app-main">
-        <div id="v-bible">
+        <div id="v-books">
             <h2 class="section-title">Священные Книги</h2>
             <div id="books-list"></div>
         </div>
 
         <div id="v-chapters" class="hidden">
             <h2 id="title-chapters" class="section-title">Главы</h2>
-            <div class="ch-grid" id="chapters-list"></div>
+            <div class="grid" id="chapters-list"></div>
         </div>
 
         <div id="v-reader" class="hidden"></div>
 
         <div id="v-gallery" class="hidden">
             <h2 class="section-title">Галерея</h2>
-            <div class="ch-grid" style="grid-template-columns: 1fr 1fr;" id="gallery-list"></div>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;" id="gallery-list"></div>
         </div>
 
         <div id="v-notes" class="hidden">
@@ -90,14 +90,8 @@
         <div id="v-premium" class="hidden" style="text-align:center;">
             <i class="bi bi-gem" style="font-size:60px; color:var(--gold-s);"></i>
             <h1 style="font-weight:900; margin:10px 0;">GOLD PASS</h1>
-            <p style="opacity:0.6;">Все книги, толкования и аудио</p>
-            <div style="text-align:left; background:var(--card); padding:20px; border-radius:20px; margin:20px 0; border: 1px solid var(--border);">
-                <div style="margin-bottom:12px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Псалтирь и Откровение</div>
-                <div style="margin-bottom:12px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Полная аудиобиблия</div>
-                <div style="margin-bottom:12px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> HD Галерея сюжетов</div>
-            </div>
+            <p>Откройте все 66 книг и аудио</p>
             <button class="buy-btn" onclick="activatePro()">АКТИВИРОВАТЬ ЗА 399₽</button>
-            <p style="margin-top:15px; font-size:11px; opacity:0.4;">Оплата через Tribute</p>
         </div>
     </main>
 
@@ -114,6 +108,9 @@
 
     <script>
         const tg = window.Telegram.WebApp;
+        // БАЗОВЫЙ ПУТЬ ДЛЯ КАРТИНОК
+        const BASE_IMG = "https://sharapovanadias-bot.github.io/bible1.0-app/public/assets/";
+
         const state = {
             lang: localStorage.getItem('lang') || 'ru',
             theme: localStorage.getItem('theme') || 'light',
@@ -131,6 +128,7 @@
 
         function init() {
             tg.expand();
+            tg.ready();
             applyTheme();
             renderBooks();
             document.getElementById('back-btn').onclick = goBack;
@@ -148,6 +146,7 @@
 
         function renderBooks() {
             const list = document.getElementById('books-list');
+            if(!list) return;
             list.innerHTML = '';
             state.books.forEach(b => {
                 const name = state.lang === 'ru' ? b.n_ru : b.n_en;
@@ -198,7 +197,7 @@
         }
 
         function showView(id) {
-            ['v-bible','v-chapters','v-reader','v-gallery','v-notes','v-premium'].forEach(v => {
+            ['v-books','v-bible','v-chapters','v-reader','v-gallery','v-notes','v-premium'].forEach(v => {
                 const el = document.getElementById(v);
                 if(el) el.classList.add('hidden');
             });
@@ -209,7 +208,7 @@
             document.querySelectorAll('.n-link').forEach(l => l.classList.remove('active'));
             document.getElementById(`n-${t}`).classList.add('active');
             if(t === 'bible') {
-                showView(`v-${state.view}`);
+                showView(`v-${state.view === 'books' ? 'bible' : state.view}`);
                 if(state.view === 'books') document.getElementById('back-btn').classList.add('hidden');
             } else {
                 showView(`v-${t}`);
@@ -219,10 +218,11 @@
         }
 
         function renderGallery() {
+            const list = document.getElementById('gallery-list');
             const imgs = ['creation','noah_ark','david_harp','sermon_on_the_mount','revelation'];
-            document.getElementById('gallery-list').innerHTML = imgs.map(img => `
-                <div class="img-item">
-                    <img src="public/assets/${img}.jpg" onerror="this.src='https://via.placeholder.com/150'">
+            list.innerHTML = imgs.map(img => `
+                <div class="img-card">
+                    <img src="${BASE_IMG}${img}.jpg" onerror="this.src='https://via.placeholder.com/150'">
                 </div>`).join('');
         }
 
@@ -258,7 +258,7 @@
         }
 
         function activatePro() {
-            tg.showConfirm("Купить PRO доступ за 399₽?", (ok) => {
+            tg.showConfirm("Купить PRO за 399₽?", (ok) => {
                 if(ok) { state.isPro = true; localStorage.setItem('isPro', 'true'); tg.showAlert("Bible Gold активирован!"); renderBooks(); switchTab('bible'); }
             });
         }
