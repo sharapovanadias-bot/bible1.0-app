@@ -3,118 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bible Premium</title>
+    <title>Bible Pro Gold</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { 
             --gold: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
             --gold-s: #b38728;
-            --bg: #fcfcf9; --text: #1c1c1e; --card: #ffffff;
-            --glass: rgba(255, 255, 255, 0.9);
+            --bg: #ffffff; --text: #1a1a1a; --card: #f2f2f7; --border: rgba(0,0,0,0.05);
         }
-        body.dark { 
-            --bg: #0a0a0b; --text: #f2f2f7; --card: #1c1c1e;
-            --glass: rgba(28, 28, 30, 0.9);
-        }
-        
+        body.dark { --bg: #000000; --text: #ffffff; --card: #1c1c1e; --border: rgba(255,255,255,0.1); }
+        body.sepia { --bg: #f4ecd8; --text: #5b4636; --card: #eaddca; --border: rgba(0,0,0,0.05); }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; }
         
-        header { 
-            position: sticky; top: 0; background: var(--bg); padding: 20px; 
-            display: flex; align-items: center; justify-content: space-between; z-index: 1000;
-        }
-        .logo { 
-            font-size: 22px; font-weight: 800; background: var(--gold); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        header { position: sticky; top: 0; background: var(--bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 20px; font-weight: 800; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        main { padding: 0 20px 120px 20px; min-height: 100vh; }
-        .section-title { font-size: 28px; font-weight: 800; margin: 10px 0 20px 0; }
+        main { padding: 15px 20px 140px 20px; }
 
-        /* Кнопки книг */
-        .book-btn {
-            background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 15px;
-            display: flex; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-            border: 1px solid rgba(0,0,0,0.02); cursor: pointer;
-        }
-        .b-icon {
-            width: 50px; height: 50px; background: var(--gold); border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 24px; margin-right: 15px;
-        }
-        .b-info h3 { margin: 0; font-size: 18px; font-weight: 700; }
-        .b-info p { margin: 0; font-size: 12px; opacity: 0.5; font-weight: bold; }
+        /* Banner */
+        .premium-banner { background: var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 25px; color: #4a3b00; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 20px rgba(179,135,40,0.2); }
+        .premium-banner h3 { margin: 0; font-size: 18px; font-weight: 800; }
 
-        /* Сетка глав */
-        .ch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .ch-btn { aspect-ratio: 1; background: var(--card); border: 1px solid rgba(0,0,0,0.05); border-radius: 15px; font-weight: bold; font-size: 18px; color: var(--text); }
+        /* Book Card */
+        .book-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid var(--border); cursor: pointer; }
+        .b-icon { width: 45px; height: 45px; background: var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px; font-size: 20px; }
+        .b-title { font-weight: 700; font-size: 17px; }
+        .b-sub { font-size: 11px; opacity: 0.5; font-weight: bold; text-transform: uppercase; }
 
-        /* Текст Библии */
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .ch-btn { aspect-ratio: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-weight: bold; font-size: 18px; color: var(--text); }
+
+        /* Reader */
         .v-row { margin-bottom: 25px; font-size: 19px; line-height: 1.7; }
-        .v-num { color: var(--gold-s); font-weight: 800; font-size: 12px; display: block; margin-bottom: 5px; }
+        .v-num { color: var(--gold-s); font-weight: 800; font-size: 11px; display: block; margin-bottom: 4px; }
 
-        /* Навигация */
-        nav {
-            position: fixed; bottom: 20px; left: 20px; right: 20px;
-            background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            height: 70px; border-radius: 22px; display: flex;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); z-index: 2000;
-        }
-        .n-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; border: none; background: none; gap: 4px; }
+        /* Nav */
+        nav { position: fixed; bottom: 20px; left: 15px; right: 15px; background: var(--card); border-radius: 25px; display: flex; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid var(--border); z-index: 2000; }
+        .n-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; border: none; background: none; gap: 4px; }
         .n-link.active { color: var(--gold-s); }
         .n-link i { font-size: 20px; }
-        .n-link span { font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .n-link span { font-size: 9px; font-weight: bold; text-transform: uppercase; }
 
         .hidden { display: none !important; }
-        #pro-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; display: none; align-items: center; justify-content: center; color: white; padding: 40px; text-align: center; }
-        .pro-b { background: var(--gold); color: #000; border: none; width: 100%; padding: 16px; border-radius: 15px; font-weight: 800; margin-top: 20px; }
+        #premium-page { text-align: center; padding: 20px 0; }
+        .buy-btn { background: var(--gold); border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 20px rgba(179,135,40,0.3); }
     </style>
 </head>
 <body>
 
     <header>
         <div style="display:flex; align-items:center;">
-            <button id="back-btn" class="hidden" style="border:none;background:none;font-size:24px;color:var(--text);margin-right:10px;"><i class="bi bi-arrow-left"></i></button>
-            <span class="logo">BIBLE PRO</span>
+            <button id="back-btn" class="hidden" style="border:none;background:none;font-size:24px;color:var(--text);margin-right:10px;"><i class="bi bi-chevron-left"></i></button>
+            <span class="logo">BIBLE GOLD</span>
         </div>
         <div style="display:flex; gap:15px; align-items:center;">
-            <i class="bi bi-moon-stars-fill" onclick="toggleTheme()" style="cursor:pointer;"></i>
-            <button onclick="toggleLang()" id="l-btn" style="border:1.5px solid var(--gold-s); background:none; color:var(--gold-s); font-weight:800; border-radius:10px; padding:3px 8px; font-size:12px;">RU</button>
+            <i class="bi bi-palette" onclick="nextTheme()" style="font-size:20px; cursor:pointer;"></i>
+            <button onclick="toggleLang()" id="lang-btn" style="border:1px solid var(--gold-s); background:none; color:var(--gold-s); font-weight:800; border-radius:8px; padding:3px 8px; font-size:11px;">RU</button>
         </div>
     </header>
 
-    <main id="main-content">
-        <div id="v-books">
-            <h1 class="section-title">Священные Книги</h1>
+    <main id="app-main">
+        <!-- Главный экран -->
+        <div id="v-bible">
+            <div id="pro-banner" class="premium-banner" onclick="switchTab('premium')">
+                <div><h3>PRO Доступ</h3><p>Откройте все книги и функции</p></div>
+                <i class="bi bi-gem"></i>
+            </div>
+            <h2 id="title-main" style="font-weight:800;margin-bottom:20px;">Библия</h2>
             <div id="books-list"></div>
         </div>
+
+        <!-- Главы -->
         <div id="v-chapters" class="hidden">
-            <h1 class="section-title">Главы</h1>
-            <div class="ch-grid" id="chapters-list"></div>
+            <h2 id="title-chapters" style="font-weight:800;margin-bottom:20px;">Главы</h2>
+            <div class="grid" id="chapters-list"></div>
         </div>
+
+        <!-- Чтение -->
         <div id="v-reader" class="hidden"></div>
-        <div id="v-gallery" class="hidden"><h1 class="section-title">Галерея</h1><div id="gallery-list" class="ch-grid" style="grid-template-columns:1fr 1fr;"></div></div>
-        <div id="v-favorites" class="hidden"><h1 class="section-title">Избранное</h1><div id="favs-list"></div></div>
+
+        <!-- Галерея -->
+        <div id="v-gallery" class="hidden">
+            <h2 id="title-gallery" style="font-weight:800;margin-bottom:20px;">Галерея</h2>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;" id="gallery-list"></div>
+        </div>
+
+        <!-- Избранное -->
+        <div id="v-favorites" class="hidden">
+            <h2 id="title-favorites" style="font-weight:800;margin-bottom:20px;">Избранное</h2>
+            <div id="favs-list"></div>
+        </div>
+
+        <!-- Премиум -->
+        <div id="v-premium" class="hidden">
+            <div id="premium-page">
+                <i class="bi bi-gem" style="font-size:60px; color:var(--gold-s);"></i>
+                <h1 style="font-weight:900;">GOLD EDITION</h1>
+                <p style="opacity:0.6;">Все книги, аудио и эксклюзивные темы</p>
+                <div style="text-align:left; background:var(--card); padding:20px; border-radius:20px; margin:20px 0;">
+                    <div style="margin-bottom:10px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Псалтирь и Откровение</div>
+                    <div style="margin-bottom:10px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Полная аудиоверсия</div>
+                    <div style="margin-bottom:10px;"><i class="bi bi-check-circle-fill" style="color:var(--gold-s);"></i> Без рекламы</div>
+                </div>
+                <button class="buy-btn" onclick="activatePro()">КУПИТЬ PRO ЗА $4.99</button>
+            </div>
+        </div>
     </main>
 
     <nav>
-        <button onclick="tab('bible')" id="n-bible" class="n-link active"><i class="bi bi-book-fill"></i><span>Книги</span></button>
-        <button onclick="tab('gallery')" id="n-gallery" class="n-link"><i class="bi bi-palette-fill"></i><span>Рисунки</span></button>
-        <button onclick="tab('favorites')" id="n-favorites" class="n-link"><i class="bi bi-star-fill"></i><span>Избранное</span></button>
-        <button onclick="showPro()" class="n-link" style="color:var(--gold-s); font-weight:bold;"><i class="bi bi-gem"></i><span>PRO</span></button>
+        <button onclick="switchTab('bible')" id="n-bible" class="n-link active"><i class="bi bi-book"></i><span>Текст</span></button>
+        <button onclick="switchTab('gallery')" id="n-gallery" class="n-link"><i class="bi bi-image"></i><span>Галерея</span></button>
+        <button onclick="switchTab('favorites')" id="n-favorites" class="n-link"><i class="bi bi-star"></i><span>Избранное</span></button>
+        <button onclick="switchTab('premium')" id="n-premium" class="n-link"><i class="bi bi-gem"></i><span>PRO</span></button>
     </nav>
-
-    <div id="pro-screen">
-        <div>
-            <i class="bi bi-gem" style="font-size: 50px; color: var(--gold-s);"></i>
-            <h2>Premium Доступ</h2>
-            <p>Откройте все книги, аудиоверсии и эксклюзивные иллюстрации.</p>
-            <button class="pro-b" onclick="buyPro()">ПОДПИСАТЬСЯ</button>
-            <p onclick="closePro()" style="margin-top:20px; opacity:0.5; font-size:12px;">ЗАКРЫТЬ</p>
-        </div>
-    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -122,106 +127,135 @@
             lang: localStorage.getItem('lang') || 'ru',
             theme: localStorage.getItem('theme') || 'light',
             isPro: localStorage.getItem('isPro') === 'true',
-            view: 'books', book: null, ch: null,
+            tab: 'bible', view: 'books', book: null, ch: null,
+            trans: {
+                ru: { bible: 'Библия', gallery: 'Галерея', favorites: 'Избранное', premium: 'PRO', pro_text: 'PRO Доступ', pro_sub: 'Откройте все книги' },
+                en: { bible: 'Bible', gallery: 'Gallery', favorites: 'Favorites', premium: 'PRO', pro_text: 'PRO Access', pro_sub: 'Unlock all books' }
+            },
             books: {
-                ru: [{id:'gen',name:'Бытие',c:50,pro:false,icon:'bi-journal-text'},{id:'mat',name:'От Матфея',c:28,pro:false,icon:'bi-sun-fill'},{id:'joh',name:'От Иоанна',c:21,pro:false,icon:'bi-stars'},{id:'psa',name:'Псалтирь',c:150,pro:true,icon:'bi-music-note-list'},{id:'rev',name:'Откровение',c:22,pro:true,icon:'bi-lightning-fill'}],
-                en: [{id:'gen',name:'Genesis',c:50,pro:false,icon:'bi-journal-text'},{id:'mat',name:'Matthew',c:28,pro:false,icon:'bi-sun-fill'},{id:'joh',name:'John',c:21,pro:false,icon:'bi-stars'},{id:'psa',name:'Psalms',c:150,pro:true,icon:'bi-music-note-list'},{id:'rev',name:'Revelation',c:22,pro:true,icon:'bi-lightning-fill'}]
+                ru: [{id:'gen',name:'Бытие',c:50,pro:false},{id:'mat',name:'От Матфея',c:28,pro:false},{id:'joh',name:'От Иоанна',c:21,pro:false},{id:'psa',name:'Псалтирь',c:150,pro:true},{id:'rev',name:'Откровение',c:22,pro:true}],
+                en: [{id:'gen',name:'Genesis',c:50,pro:false},{id:'mat',name:'Matthew',c:28,pro:false},{id:'joh',name:'John',c:21,pro:false},{id:'psa',name:'Psalms',c:150,pro:true},{id:'rev',name:'Revelation',c:22,pro:true}]
             }
         };
 
         function init() {
             tg.expand();
-            document.body.className = state.theme;
-            renderBooks();
+            applyTheme();
+            updateUI();
             document.getElementById('back-btn').onclick = goBack;
         }
 
-        function toggleTheme() {
-            state.theme = state.theme === 'light' ? 'dark' : 'light';
+        function applyTheme() {
             document.body.className = state.theme;
+        }
+
+        function nextTheme() {
+            const themes = ['light', 'dark', 'sepia'];
+            state.theme = themes[(themes.indexOf(state.theme) + 1) % 3];
             localStorage.setItem('theme', state.theme);
+            applyTheme();
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'ru' ? 'en' : 'ru';
+            localStorage.setItem('lang', state.lang);
+            updateUI();
+            if(state.view === 'chapters') selectBook(state.book);
+            if(state.view === 'reader') selectChapter(state.ch);
+        }
+
+        function updateUI() {
+            const t = state.trans[state.lang];
+            document.getElementById('lang-btn').innerText = state.lang.toUpperCase();
+            document.getElementById('n-bible').querySelector('span').innerText = t.bible;
+            document.getElementById('n-gallery').querySelector('span').innerText = t.gallery;
+            document.getElementById('n-favorites').querySelector('span').innerText = t.favorites;
+            document.getElementById('title-main').innerText = t.bible;
+            document.getElementById('title-gallery').innerText = t.gallery;
+            document.getElementById('title-favorites').innerText = t.favorites;
+            document.getElementById('pro-banner').querySelector('h3').innerText = t.pro_text;
+            document.getElementById('pro-banner').querySelector('p').innerText = t.pro_sub;
+            
+            if(state.isPro) document.getElementById('pro-banner').classList.add('hidden');
+            renderBooks();
         }
 
         function renderBooks() {
             const list = document.getElementById('books-list');
-            if(!list) return;
             list.innerHTML = '';
             state.books[state.lang].forEach(b => {
                 const div = document.createElement('div');
-                div.className = 'book-btn';
-                div.innerHTML = `
-                    <div class="b-icon"><i class="bi ${b.icon}"></i></div>
-                    <div class="b-info"><h3>${b.name}</h3><p>${b.c} ГЛАВ</p></div>
-                    ${b.pro && !state.isPro ? '<i class="bi bi-lock-fill" style="margin-left:auto;color:var(--gold-s);"></i>' : '<i class="bi bi-chevron-right" style="margin-left:auto;opacity:0.2;"></i>'}
-                `;
-                div.onclick = () => { if(b.pro && !state.isPro) showPro(); else selectBook(b); };
+                div.className = 'book-card';
+                div.innerHTML = `<div class="b-icon"><i class="bi bi-book"></i></div><div style="flex-grow:1;"><div class="b-title">${b.name}</div><div class="b-sub">${b.c} глав</div></div>${b.pro && !state.isPro ? '<i class="bi bi-lock-fill" style="color:var(--gold-s);"></i>' : '<i class="bi bi-chevron-right" style="opacity:0.2;"></i>'}`;
+                div.onclick = () => { if(b.pro && !state.isPro) switchTab('premium'); else selectBook(b); };
                 list.appendChild(div);
             });
         }
 
         function selectBook(b) {
             state.book = b; state.view = 'chapters';
-            document.getElementById('back-btn').classList.remove('hidden');
             showView('v-chapters');
-            const vc = document.getElementById('chapters-list');
-            vc.innerHTML = '';
+            document.getElementById('back-btn').classList.remove('hidden');
+            document.getElementById('title-chapters').innerText = b.name;
+            const container = document.getElementById('chapters-list');
+            container.innerHTML = '';
             for(let i=1; i<=b.c; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'ch-btn'; btn.innerText = i;
                 btn.onclick = () => selectChapter(i);
-                vc.appendChild(btn);
+                container.appendChild(btn);
             }
         }
 
-        async function selectChapter(ch) {
-            state.ch = ch; state.view = 'reader';
+        async function selectChapter(chNum) {
+            state.ch = chNum; state.view = 'reader';
             showView('v-reader');
             const vr = document.getElementById('v-reader');
-            vr.innerHTML = '<p style="text-align:center;padding:50px;">Загрузка...</p>';
+            vr.innerHTML = '<p style="text-align:center;padding:50px;">...</p>';
             try {
                 const r = await fetch(`data/${state.lang}/${state.book.id}.json`);
                 const d = await r.json();
-                const chapter = d.chapters.find(c => c.chapter === ch);
-                vr.innerHTML = `<h2 style="font-size:14px;opacity:0.4;margin-bottom:30px;">ГЛАВА ${ch}</h2>` + 
-                               chapter.verses.map((t, i) => `<div class="v-row"><span class="v-num">${i+1}</span>${t}</div>`).join('');
+                const chapter = d.chapters.find(c => c.chapter === chNum);
+                vr.innerHTML = chapter.verses.map((t, i) => `<div class="v-row"><span class="v-num">${i+1}</span>${t}</div>`).join('');
             } catch(e) { vr.innerHTML = 'Error'; }
         }
 
         function showView(id) {
-            ['v-books','v-chapters','v-reader','v-gallery','v-favorites'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            ['v-bible','v-chapters','v-reader','v-gallery','v-favorites','v-premium'].forEach(v => document.getElementById(v).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
+        }
+
+        function switchTab(t) {
+            state.tab = t;
+            document.querySelectorAll('.n-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(`n-${t}`).classList.add('active');
+            if(t === 'bible') { showView(`v-${state.view}`); if(state.view === 'books') document.getElementById('back-btn').classList.add('hidden'); }
+            else { showView(`v-${t}`); document.getElementById('back-btn').classList.add('hidden'); }
+            if(t === 'gallery') renderGallery();
         }
 
         function goBack() {
             if(state.view === 'reader') selectBook(state.book);
-            else { state.view = 'books'; showView('v-books'); document.getElementById('back-btn').classList.add('hidden'); }
+            else { state.view = 'books'; showView('v-bible'); document.getElementById('back-btn').classList.add('hidden'); }
         }
 
-        function toggleLang() {
-            state.lang = state.lang === 'ru' ? 'en' : 'ru';
-            localStorage.setItem('lang', state.lang);
-            document.getElementById('l-btn').innerText = state.lang.toUpperCase();
-            if(state.book) state.book = state.books[state.lang].find(b => b.id === state.book.id);
-            renderBooks();
-            if(state.view === 'chapters') selectBook(state.book);
-            if(state.view === 'reader') selectChapter(state.ch);
+        function renderGallery() {
+            const imgs = ['creation','noah_ark','david_harp','sermon_on_the_mount','revelation'];
+            document.getElementById('gallery-list').innerHTML = imgs.map(img => `<div style="background:var(--card);border-radius:15px;overflow:hidden;"><img src="public/assets/${img}.jpg" style="width:100%;height:100px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/150'"></div>`).join('');
         }
 
-        function tab(name) {
-            document.querySelectorAll('.n-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(`n-${name}`).classList.add('active');
-            if(name === 'bible') showView(`v-${state.view}`);
-            else { showView(`v-${name}`); document.getElementById('back-btn').classList.add('hidden'); }
+        function activatePro() {
+            tg.showConfirm("Активировать PRO доступ?", (ok) => {
+                if(ok) {
+                    state.isPro = true; localStorage.setItem('isPro', 'true');
+                    tg.showAlert("Premium активирован!");
+                    updateUI();
+                    switchTab('bible');
+                }
+            });
         }
 
-        function showPro() { document.getElementById('pro-screen').style.display = 'flex'; }
-        function closePro() { document.getElementById('pro-screen').style.display = 'none'; }
-        function buyPro() { state.isPro = true; localStorage.setItem('isPro', 'true'); closePro(); renderBooks(); }
-
-        // Запуск
-        document.addEventListener('DOMContentLoaded', init);
-        // Запасной запуск, если DOMContentLoaded уже прошел
-        if (document.readyState === "complete" || document.readyState === "interactive") { init(); }
+        init();
     </script>
 </body>
 </html>
