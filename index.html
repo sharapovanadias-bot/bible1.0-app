@@ -3,68 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bible for Everyone</title>
+    <title>Bible App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { --blue: #3390ec; --bg: #ffffff; --text: #000000; --sec-bg: #f4f4f5; --hint: #999; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        header { position: sticky; top: 0; background: var(--sec-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .btn-lang { background: var(--blue); color: #fff; border: none; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; }
-        main { padding: 16px; padding-bottom: 80px; min-height: 100vh; }
-        .card { background: var(--sec-bg); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); user-select: none; }
+        header { position: sticky; top: 0; background: var(--sec-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 10; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .btn-lang { background: var(--blue); color: #fff; border: none; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; }
+        main { padding: 16px; padding-bottom: 90px; }
+        .card { background: var(--sec-bg); border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 500; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .btn-ch { aspect-ratio: 1/1; background: var(--sec-bg); border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; color: var(--text); }
-        .verse-box { background: rgba(0,0,0,0.03); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-        .verse-head { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .btn-ch { aspect-ratio: 1/1; background: var(--sec-bg); border: none; border-radius: 10px; font-weight: bold; font-size: 16px; color: var(--text); }
+        .verse-box { background: rgba(0,0,0,0.03); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+        .verse-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
         .v-num { color: var(--blue); font-weight: bold; font-size: 14px; }
-        .v-text { line-height: 1.5; font-size: 17px; margin: 0; }
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--sec-bg); border-top: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-around; padding: 8px; z-index: 20; }
-        .nav-item { border: none; background: none; color: var(--hint); display: flex; flex-direction: column; align-items: center; font-size: 10px; cursor: pointer; flex: 1; }
+        .v-text { line-height: 1.6; font-size: 17px; margin: 0; }
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--sec-bg); border-top: 1px solid rgba(0,0,0,0.1); display: flex; padding: 8px 4px; z-index: 20; }
+        .nav-item { border: none; background: none; color: var(--hint); display: flex; flex-direction: column; align-items: center; font-size: 10px; flex: 1; }
         .nav-item.active { color: var(--blue); }
-        .nav-item i { font-size: 20px; margin-bottom: 2px; }
+        .nav-item i { font-size: 20px; margin-bottom: 3px; }
+        .hidden { display: none !important; }
         #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: flex-end; }
         #modal-content { background: var(--bg); width: 100%; border-radius: 20px 20px 0 0; padding: 24px; max-height: 80vh; overflow-y: auto; transform: translateY(100%); transition: 0.3s; }
-        .hidden { display: none !important; }
         .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .img-card { background: var(--sec-bg); border-radius: 12px; overflow: hidden; text-align: center; }
-        .img-card img { width: 100%; height: 120px; object-fit: cover; }
-        .img-card p { padding: 8px; margin: 0; font-size: 11px; font-weight: bold; }
+        .img-card { background: var(--sec-bg); border-radius: 12px; overflow: hidden; }
+        .img-card img { width: 100%; height: 110px; object-fit: cover; background: #eee; }
+        .img-card p { padding: 8px; margin: 0; font-size: 11px; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
     <header>
         <div style="display: flex; align-items: center;">
-            <button id="back-button" class="hidden" style="border:none; background:none; font-size: 20px; margin-right: 12px;"><i class="bi bi-chevron-left"></i></button>
-            <h1 id="header-title" style="margin:0; font-size: 20px;">Bible</h1>
+            <button id="back-btn" class="hidden" style="border:none; background:none; font-size: 20px; margin-right: 12px; color: var(--text);"><i class="bi bi-chevron-left"></i></button>
+            <h1 id="h-title" style="margin:0; font-size: 19px;">Bible</h1>
         </div>
-        <button onclick="toggleLanguage()" class="btn-lang" id="lang-label">RU</button>
+        <button onclick="toggleLang()" class="btn-lang" id="lang-btn">RU</button>
     </header>
 
-    <main id="app-content">
-        <div id="view-books"></div>
-        <div id="view-chapters" class="hidden grid"></div>
-        <div id="view-reader" class="hidden"></div>
-        <div id="view-favorites" class="hidden"></div>
-        <div id="view-gallery" class="hidden gallery-grid"></div>
-        <div id="view-search" class="hidden">
-            <input type="text" id="search-input" placeholder="Search..." style="width:100%; padding:12px; border-radius:8px; border:none; background:var(--sec-bg); margin-bottom:16px;">
+    <main>
+        <div id="v-books"></div>
+        <div id="v-chapters" class="hidden grid"></div>
+        <div id="v-reader" class="hidden"></div>
+        <div id="v-favorites" class="hidden"></div>
+        <div id="v-gallery" class="hidden gallery-grid"></div>
+        <div id="v-search" class="hidden">
+            <input type="text" id="search-input" placeholder="Search..." style="width:100%; padding:12px; border-radius:10px; border:none; background:var(--sec-bg); margin-bottom:16px; color: var(--text);">
             <div id="search-results"></div>
         </div>
-        <div id="view-info" class="hidden" style="text-align: center; padding-top: 40px;">
-            <img src="public/assets/logo.png" style="width:100px; border-radius:20px; margin-bottom:16px;" onerror="this.src='https://via.placeholder.com/100'">
+        <div id="v-info" class="hidden" style="text-align: center; padding-top: 30px;">
+            <img src="public/assets/logo.png" style="width:90px; border-radius:20px; margin-bottom:15px;" onerror="this.src='https://via.placeholder.com/90'">
             <h2 style="margin:0;">Bible for Everyone</h2>
-            <p style="color:var(--hint)">Version 1.2.0</p>
+            <p style="color:var(--hint)">Version 1.2.5</p>
         </div>
     </main>
 
-    <nav>
-        <button onclick="switchTab('bible')" id="nav-bible" class="nav-item active"><i class="bi bi-book"></i><span>Bible</span></button>
-        <button onclick="switchTab('favorites')" id="nav-favorites" class="nav-item"><i class="bi bi-bookmark-heart"></i><span>Favs</span></button>
-        <button onclick="switchTab('gallery')" id="nav-gallery" class="nav-item"><i class="bi bi-image"></i><span>Gallery</span></button>
-        <button onclick="switchTab('search')" id="nav-search" class="nav-item"><i class="bi bi-search"></i><span>Search</span></button>
-        <button onclick="switchTab('info')" id="nav-info" class="nav-item"><i class="bi bi-info-circle"></i><span>Info</span></button>
+    <nav id="bottom-nav">
+        <button onclick="tab('bible')" id="n-bible" class="nav-item active"><i class="bi bi-book"></i><span>Bible</span></button>
+        <button onclick="tab('favorites')" id="n-favorites" class="nav-item"><i class="bi bi-bookmark-heart"></i><span>Favs</span></button>
+        <button onclick="tab('gallery')" id="n-gallery" class="nav-item"><i class="bi bi-image"></i><span>Gallery</span></button>
+        <button onclick="tab('search')" id="n-search" class="nav-item"><i class="bi bi-search"></i><span>Search</span></button>
+        <button onclick="tab('info')" id="n-info" class="nav-item"><i class="bi bi-info-circle"></i><span>Info</span></button>
     </nav>
 
     <div id="modal-overlay" onclick="closeModal()">
@@ -73,76 +73,69 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready(); // Сообщаем Telegram, что приложение готово
-
         const state = {
-            language: localStorage.getItem('lang') || 'ru',
-            currentTab: 'bible', view: 'books', currentBook: null, currentChapter: null,
-            translations: {
-                ru: { bible: 'Библия', search: 'Поиск', gallery: 'Рисунки', info: 'Инфо', favorites: 'Избранное', loading: 'Загрузка...', noResults: 'Пусто', commentary: 'Толкование' },
-                en: { bible: 'Bible', search: 'Search', gallery: 'Gallery', info: 'Info', favorites: 'Favorites', loading: 'Loading...', noResults: 'Empty', commentary: 'Commentary' }
+            lang: localStorage.getItem('lang') || 'ru',
+            tab: 'bible', view: 'books', book: null, ch: null,
+            trans: {
+                ru: { bible: 'Библия', search: 'Поиск', gallery: 'Рисунки', info: 'Инфо', favorites: 'Избранное', loading: 'Загрузка...', commentary: 'Толкование' },
+                en: { bible: 'Bible', search: 'Search', gallery: 'Gallery', info: 'Info', favorites: 'Favorites', loading: 'Loading...', commentary: 'Commentary' }
             },
             books: {
-                ru: [{id:'gen',name:'Бытие',chapters:50},{id:'psa',name:'Псалтирь',chapters:150},{id:'mat',name:'От Матфея',chapters:28},{id:'joh',name:'От Иоанна',chapters:21},{id:'rev',name:'Откровение',chapters:22}],
-                en: [{id:'gen',name:'Genesis',chapters:50},{id:'psa',name:'Psalms',chapters:150},{id:'mat',name:'Matthew',chapters:28},{id:'joh',name:'John',chapters:21},{id:'rev',name:'Revelation',chapters:22}]
+                ru: [{id:'gen',name:'Бытие',c:50},{id:'psa',name:'Псалтирь',c:150},{id:'mat',name:'От Матфея',c:28},{id:'joh',name:'От Иоанна',c:21},{id:'rev',name:'Откровение',c:22}],
+                en: [{id:'gen',name:'Genesis',c:50},{id:'psa',name:'Psalms',c:150},{id:'mat',name:'Matthew',c:28},{id:'joh',name:'John',c:21},{id:'rev',name:'Revelation',c:22}]
             }
         };
 
+        let favs = JSON.parse(localStorage.getItem('favs') || '[]');
         const views = ['books', 'chapters', 'reader', 'favorites', 'gallery', 'search', 'info'];
-        let favorites = JSON.parse(localStorage.getItem('favs') || '[]');
 
         function init() {
-            updateTheme();
-            updateUILanguage();
-            document.getElementById('back-button').onclick = goBack;
+            tg.expand();
+            tg.ready();
+            applyTheme();
+            updateUI();
+            document.getElementById('back-btn').onclick = goBack;
         }
 
-        function updateTheme() {
-            document.documentElement.style.setProperty('--bg', tg.backgroundColor || '#ffffff');
-            document.documentElement.style.setProperty('--text', tg.textColor || '#000000');
-            document.documentElement.style.setProperty('--sec-bg', tg.secondaryBackgroundColor || '#f4f4f5');
-            document.documentElement.style.setProperty('--blue', tg.buttonColor || '#3390ec');
+        function applyTheme() {
+            const root = document.documentElement;
+            root.style.setProperty('--bg', tg.backgroundColor || '#ffffff');
+            root.style.setProperty('--text', tg.textColor || '#000000');
+            root.style.setProperty('--sec-bg', tg.secondaryBackgroundColor || '#f4f4f5');
+            root.style.setProperty('--blue', tg.buttonColor || '#3390ec');
         }
 
-        function updateUILanguage() {
-            const t = state.translations[state.language];
-            document.getElementById('lang-label').innerText = state.language.toUpperCase();
-            views.forEach(v => { const el = document.querySelector(`#nav-${v} span`); if(el) el.innerText = t[v] || v; });
-            if (state.currentTab === 'bible' && state.view === 'books') document.getElementById('header-title').innerText = t.bible;
+        function updateUI() {
+            const t = state.trans[state.lang];
+            document.getElementById('lang-btn').innerText = state.lang.toUpperCase();
+            ['bible', 'favorites', 'gallery', 'search', 'info'].forEach(id => {
+                const el = document.querySelector(`#n-${id} span`);
+                if(el) el.innerText = t[id];
+            });
+            if (state.tab === 'bible' && state.view === 'books') document.getElementById('h-title').innerText = t.bible;
             renderBooks();
         }
 
-        function toggleLanguage() {
-            state.language = state.language === 'ru' ? 'en' : 'ru';
-            localStorage.setItem('lang', state.language);
-            if (state.currentBook) state.currentBook = state.books[state.language].find(b => b.id === state.currentBook.id);
-            updateUILanguage();
-            if (state.view === 'chapters') selectBook(state.currentBook);
-            if (state.view === 'reader') selectChapter(state.currentChapter);
-        }
-
         function renderBooks() {
-            const v = document.getElementById('view-books');
-            v.innerHTML = '';
-            state.books[state.language].forEach(book => {
+            const container = document.getElementById('v-books');
+            container.innerHTML = '';
+            state.books[state.lang].forEach(b => {
                 const div = document.createElement('div');
                 div.className = 'card';
-                div.innerHTML = `<span>${book.name}</span><i class="bi bi-chevron-right text-hint"></i>`;
-                div.onclick = () => selectBook(book);
-                v.appendChild(div);
+                div.innerHTML = `<span>${b.name}</span><i class="bi bi-chevron-right text-hint"></i>`;
+                div.onclick = () => selectBook(b);
+                container.appendChild(div);
             });
         }
 
-        function selectBook(book) {
-            state.currentBook = book; state.view = 'chapters';
-            document.getElementById('header-title').innerText = book.name;
-            document.getElementById('back-button').classList.remove('hidden');
-            hideViews();
-            document.getElementById('view-chapters').classList.remove('hidden');
-            const vc = document.getElementById('view-chapters');
+        function selectBook(b) {
+            state.book = b; state.view = 'chapters';
+            document.getElementById('h-title').innerText = b.name;
+            document.getElementById('back-btn').classList.remove('hidden');
+            showView('v-chapters');
+            const vc = document.getElementById('v-chapters');
             vc.innerHTML = '';
-            for (let i = 1; i <= book.chapters; i++) {
+            for (let i = 1; i <= b.c; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'btn-ch';
                 btn.innerText = i;
@@ -151,94 +144,99 @@
             }
         }
 
-        async function selectChapter(ch) {
-            state.currentChapter = ch; state.view = 'reader';
-            document.getElementById('header-title').innerText = `${state.currentBook.name}, ${ch}`;
-            hideViews();
-            const vr = document.getElementById('view-reader');
-            vr.classList.remove('hidden');
-            vr.innerHTML = '<p style="text-align:center; padding:20px;">Загрузка...</p>';
+        async function selectChapter(chNum) {
+            state.ch = chNum; state.view = 'reader';
+            document.getElementById('h-title').innerText = `${state.book.name}, ${chNum}`;
+            showView('v-reader');
+            const vr = document.getElementById('v-reader');
+            vr.innerHTML = '<p style="text-align:center;padding:20px;">...</p>';
             try {
-                const resp = await fetch(`data/${state.language}/${state.currentBook.id}.json`);
-                const data = await resp.json();
-                const chapter = data.chapters.find(c => c.chapter === ch);
-                let html = '';
-                chapter.verses.forEach((text, i) => {
-                    const vNum = i + 1;
-                    const isFav = favorites.some(f => f.id === state.currentBook.id && f.ch === ch && f.v === vNum && f.l === state.language);
-                    html += `<div class="verse-box">
+                const r = await fetch(`data/${state.lang}/${state.book.id}.json`);
+                const d = await r.json();
+                const chapter = d.chapters.find(c => c.chapter === chNum);
+                vr.innerHTML = chapter.verses.map((t, i) => {
+                    const vN = i + 1;
+                    const isF = favs.some(f => f.id === state.book.id && f.ch === chNum && f.v === vN && f.l === state.lang);
+                    return `<div class="verse-box">
                         <div class="verse-head">
-                            <span class="v-num">${vNum}</span>
+                            <span class="v-num">${vN}</span>
                             <div>
-                                <i class="bi ${isFav?'bi-heart-fill text-red-500':'bi-heart'}" onclick="toggleFav('${state.currentBook.id}','${state.currentBook.name}',${ch},${vNum},'${text.replace(/'/g,"\\'")}')" style="margin-right:15px; cursor:pointer;"></i>
-                                <i class="bi bi-chat-text text-blue-500" onclick="showComm(${vNum})" style="cursor:pointer;"></i>
+                                <i class="bi ${isF?'bi-heart-fill text-red-500':'bi-heart'}" onclick="toggleFav('${state.book.id}','${state.book.name}',${chNum},${vN},'${t.replace(/'/g,"\\'")}')" style="margin-right:18px;"></i>
+                                <i class="bi bi-chat-text text-blue-500" onclick="showComm(${vN})"></i>
                             </div>
                         </div>
-                        <p class="v-text">${text}</p>
+                        <p class="v-text">${t}</p>
                     </div>`;
-                });
-                vr.innerHTML = html;
-            } catch (e) { vr.innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>'; }
+                }).join('');
+            } catch(e) { vr.innerHTML = 'Error'; }
         }
 
-        function goBack() {
-            if (state.view === 'reader') selectBook(state.currentBook);
-            else if (state.view === 'chapters') { state.view = 'books'; hideViews(); document.getElementById('view-books').classList.remove('hidden'); document.getElementById('back-button').classList.add('hidden'); document.getElementById('header-title').innerText = state.translations[state.language].bible; }
+        function showView(id) {
+            views.forEach(v => document.getElementById(`v-${v}`).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        function hideViews() { views.forEach(v => document.getElementById(`view-${v}`).classList.add('hidden')); }
-
-        function switchTab(tab) {
-            state.currentTab = tab;
+        function tab(name) {
+            state.tab = name;
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${tab}`).classList.add('active');
-            hideViews();
-            if (tab === 'bible') { 
-                document.getElementById(`view-${state.view}`).classList.remove('hidden');
-                document.getElementById('header-title').innerText = state.view === 'books' ? state.translations[state.language].bible : state.currentBook.name;
-                if(state.view !== 'books') document.getElementById('back-button').classList.remove('hidden');
+            document.getElementById(`n-${name}`).classList.add('active');
+            if (name === 'bible') {
+                showView(`v-${state.view}`);
+                document.getElementById('h-title').innerText = state.view === 'books' ? state.trans[state.lang].bible : state.book.name;
+                if(state.view === 'books') document.getElementById('back-btn').classList.add('hidden');
             } else {
-                document.getElementById(`view-${tab}`).classList.remove('hidden');
-                document.getElementById('header-title').innerText = state.translations[state.language][tab];
-                document.getElementById('back-button').classList.add('hidden');
-                if (tab === 'gallery') renderGallery();
-                if (tab === 'favorites') renderFavs();
+                showView(`v-${name}`);
+                document.getElementById('h-title').innerText = state.trans[state.lang][name];
+                document.getElementById('back-btn').classList.add('hidden');
+                if(name === 'gallery') renderGallery();
+                if(name === 'favorites') renderFavs();
             }
         }
 
+        function toggleLang() {
+            state.lang = state.lang === 'ru' ? 'en' : 'ru';
+            localStorage.setItem('lang', state.lang);
+            if(state.book) state.book = state.books[state.lang].find(b => b.id === state.book.id);
+            updateUI();
+            if(state.view === 'chapters') selectBook(state.book);
+            if(state.view === 'reader') selectChapter(state.ch);
+        }
+
+        function goBack() {
+            if(state.view === 'reader') selectBook(state.book);
+            else if(state.view === 'chapters') { state.view = 'books'; showView('v-books'); document.getElementById('back-btn').classList.add('hidden'); updateUI(); }
+        }
+
         function toggleFav(id, name, ch, v, txt) {
-            const idx = favorites.findIndex(f => f.id === id && f.ch === ch && f.v === v && f.l === state.language);
-            if (idx > -1) favorites.splice(idx, 1);
-            else favorites.push({id, name, ch, v, text: txt, l: state.language});
-            localStorage.setItem('favs', JSON.stringify(favorites));
-            if (state.view === 'reader') selectChapter(state.currentChapter);
-            if (state.currentTab === 'favorites') renderFavs();
+            const idx = favs.findIndex(f => f.id === id && f.ch === ch && f.v === v && f.l === state.lang);
+            if(idx > -1) favs.splice(idx, 1);
+            else favs.push({id, name, ch, v, text: txt, l: state.lang});
+            localStorage.setItem('favs', JSON.stringify(favs));
+            selectChapter(state.ch);
         }
 
         function renderFavs() {
-            const list = favorites.filter(f => f.l === state.language);
-            const vf = document.getElementById('view-favorites');
-            vf.innerHTML = list.length ? list.map(f => `<div class="card" style="flex-direction:column; align-items:flex-start;"><p class="v-num" style="margin-bottom:4px;">${f.name} ${f.ch}:${f.v}</p><p class="v-text" style="font-style:italic; font-size:14px;">"${f.text}"</p></div>`).join('') : '<p style="text-align:center; padding:40px; opacity:0.5;">Пусто</p>';
+            const list = favs.filter(f => f.l === state.lang);
+            document.getElementById('v-favorites').innerHTML = list.length ? list.map(f => `<div class="card" style="display:block;"><p class="v-num">${f.name} ${f.ch}:${f.v}</p><p style="font-size:14px;margin:5px 0 0 0;">${f.text}</p></div>`).join('') : '<p style="text-align:center;padding:40px;opacity:0.5;">...</p>';
         }
 
         function renderGallery() {
-            const titles = state.language === 'ru' ? ['Сотворение','Ковчег','Давид','Проповедь','Иерусалим'] : ['Creation','Ark','David','Sermon','Jerusalem'];
+            const t = state.lang === 'ru' ? ['Сотворение','Ковчег','Давид','Проповедь','Иерусалим'] : ['Creation','Ark','David','Sermon','Jerusalem'];
             const imgs = ['creation','noah_ark','david_harp','sermon_on_the_mount','revelation'];
-            const vg = document.getElementById('view-gallery');
-            vg.innerHTML = imgs.map((img, i) => `<div class="img-card"><img src="public/assets/${img}.jpg" onerror="this.src='https://via.placeholder.com/150'"><p>${titles[i]}</p></div>`).join('');
+            document.getElementById('v-gallery').innerHTML = imgs.map((img, i) => `<div class="img-card"><img src="public/assets/${img}.jpg" onerror="this.src='https://via.placeholder.com/150'"><p>${t[i]}</p></div>`).join('');
         }
 
-        async function showComm(vNum) {
+        async function showComm(vN) {
             const o = document.getElementById('modal-overlay');
             const c = document.getElementById('modal-content');
             o.style.display = 'flex';
             setTimeout(() => c.style.transform = 'translateY(0)', 10);
-            c.innerHTML = '<p>Загрузка...</p>';
+            c.innerHTML = '...';
             try {
-                const resp = await fetch(`data/${state.language}/comm/${state.currentBook.id}_${state.currentChapter}.json`);
-                const data = await resp.json();
-                c.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3 style="margin:0;">${state.translations[state.language].commentary} ${vNum}</h3><span onclick="closeModal()" style="font-size:24px; cursor:pointer;">&times;</span></div><p style="line-height:1.6;">${data[vNum] || '...'}</p>`;
-            } catch (e) { c.innerHTML = '<p>Толкование скоро появится.</p>'; }
+                const r = await fetch(`data/${state.lang}/comm/${state.book.id}_${state.ch}.json`);
+                const d = await r.json();
+                c.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:15px;"><h3 style="margin:0;">${state.trans[state.lang].commentary} ${vN}</h3><span onclick="closeModal()" style="font-size:24px;">&times;</span></div><p style="line-height:1.6;">${d[vN] || '...'}</p>`;
+            } catch(e) { c.innerHTML = '<p>...</p>'; }
         }
 
         function closeModal() {
