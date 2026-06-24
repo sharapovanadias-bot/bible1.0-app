@@ -425,5 +425,4 @@ function goToVerseById(bookId, ch, v) {
         switchTab('bible');
     }
 }
-
 init();
