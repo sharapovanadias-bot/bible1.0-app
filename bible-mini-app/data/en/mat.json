@@ -1,0 +1,16 @@
+{
+  "book": "Matthew",
+  "chapters": [
+    {
+      "chapter": 1,
+      "verses": [
+        "The book of the generation of Jesus Christ, the son of David, the son of Abraham.",
+        "Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren;",
+        "And Judas begat Phares and Zara of Thamar; and Phares begat Esrom; and Esrom begat Aram;",
+        "And Aram begat Aminadab; and Aminadab begat Naasson; and Naasson begat Salmon;",
+        "And Salmon begat Booz of Rachab; and Booz begat Obed of Ruth; and Obed begat Jesse;",
+        "And Jesse begat David the king; and David the king begat Solomon of her that had been the wife of Urias;"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библия для всех</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #222);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: all 0.2s ease;
+        }
+        .bg-secondary {
+            background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+        }
+        .text-hint {
+            color: var(--tg-theme-hint-color, #999);
+        }
+        .btn-primary {
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #fff);
+        }
+        .border-theme {
+            border-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+        }
+        .nav-tab.active {
+            color: var(--tg-theme-button-color, #3390ec);
+            border-bottom: 2px solid var(--tg-theme-button-color, #3390ec);
+        }
+        #app-content {
+            padding-bottom: 70px;
+        }
+        .bible-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .verse-number {
+            font-size: 0.8rem;
+            color: var(--tg-theme-button-color, #3390ec);
+            margin-right: 4px;
+            vertical-align: super;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="sticky top-0 z-10 bg-secondary p-4 shadow-sm flex items-center justify-between">
+            <div class="flex items-center">
+                <button id="back-button" class="hidden text-xl mr-3">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <h1 id="header-title" class="text-xl font-bold">Библия</h1>
+            </div>
+            <button onclick="toggleLanguage()" class="px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-bold uppercase">
+                <span id="lang-label">RU</span>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main id="app-content" class="flex-grow p-4 overflow-y-auto">
+            <!-- Content will be injected here -->
+            <div id="view-books" class="space-y-2">
+                <!-- Books list -->
+            </div>
+            <div id="view-chapters" class="hidden grid grid-cols-5 gap-2">
+                <!-- Chapters list -->
+            </div>
+            <div id="view-reader" class="hidden bible-text">
+                <!-- Verse text -->
+            </div>
+            <div id="view-search" class="hidden">
+                <div class="mb-4">
+                    <input type="text" id="search-input" placeholder="Поиск по стихам..." class="w-full p-3 rounded-lg bg-secondary border-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white">
+                </div>
+                <div id="search-results" class="space-y-4"></div>
+            </div>
+            <div id="view-gallery" class="hidden grid grid-cols-2 gap-3">
+                <!-- Images -->
+            </div>
+            <div id="view-favorites" class="hidden space-y-4">
+                <!-- Favs -->
+            </div>
+            <div id="view-info" class="hidden space-y-6">
+                <div class="text-center py-6">
+                    <img src="public/assets/logo.png" class="w-24 h-24 mx-auto rounded-2xl shadow-lg mb-4">
+                    <h2 class="text-2xl font-bold" id="info-title">Библия для всех</h2>
+                    <p class="text-hint">Version 1.0.0</p>
+                </div>
+                <div class="bg-secondary p-4 rounded-xl">
+                    <h3 class="font-bold mb-2">Переводы / Translations</h3>
+                    <ul class="text-sm space-y-2 opacity-80">
+                        <li>RU: Синодальный перевод (1876)</li>
+                        <li>EN: King James Version (KJV)</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Navigation Bottom Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-secondary border-t border-theme flex justify-around p-2 z-20">
+            <button onclick="switchTab('bible')" id="nav-bible" class="nav-tab active flex flex-col items-center p-2 transition-colors">
+                <i class="bi bi-book text-xl"></i>
+                <span class="text-xs mt-1">Текст</span>
+            </button>
+            <button onclick="switchTab('search')" id="nav-search" class="nav-tab flex flex-col items-center p-2 transition-colors">
+                <i class="bi bi-search text-xl"></i>
+                <span class="text-xs mt-1">Поиск</span>
+            </button>
+            <button onclick="switchTab('gallery')" id="nav-gallery" class="nav-tab flex flex-col items-center p-2 transition-colors">
+                <i class="bi bi-image text-xl"></i>
+                <span class="text-xs mt-1">Рисунки</span>
+            </button>
+            <button onclick="switchTab('info')" id="nav-info" class="nav-tab flex flex-col items-center p-2 transition-colors">
+                <i class="bi bi-info-circle text-xl"></i>
+                <span class="text-xs mt-1">Инфо</span>
+            </button>
+            <button onclick="switchTab('favorites')" id="nav-favorites" class="nav-tab flex flex-col items-center p-2 transition-colors">
+                <i class="bi bi-bookmark-heart text-xl"></i>
+                <span class="text-xs mt-1">Избранное</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modals / Overlays -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 flex items-end">
+        <div id="modal-content" class="bg-white w-full rounded-t-2xl p-6 transition-transform transform translate-y-full max-h-[80vh] overflow-y-auto" style="background-color: var(--tg-theme-bg-color);">
+            <!-- Commentary content -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "Библия для всех",
+  "short_name": "Библия",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3390ec",
+  "icons": [
+    {
+      "src": "public/assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
